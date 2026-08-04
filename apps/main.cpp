@@ -2,7 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <iomanip>
-#include "FlightController.hpp" // Hooking into your new module!
+#include "../include/FlightController.hpp"
 
 struct Quadcopter {
     double altitude = 0.0;     
