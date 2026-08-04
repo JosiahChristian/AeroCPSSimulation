@@ -28,9 +28,14 @@ else()
 endif()
 
 # Target Include Directories
-target_include_directories(sim_engine
-    INTERFACE
+# Target Include Directories 
+target_include_directories(sim_engine 
+    PUBLIC 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    INTERFACE 
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+
 )
 
 # Main Executable Application
