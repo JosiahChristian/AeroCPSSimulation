@@ -1,4 +1,4 @@
-#include "FlightController.hpp"
+#include "../include/FlightController.hpp"
 
 FlightController::FlightController(double kp, double ki, double kd)
     : kp_(kp), ki_(ki), kd_(kd), integral_error_(0.0), previous_error_(0.0) {}
