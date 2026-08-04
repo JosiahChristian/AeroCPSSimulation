@@ -19,24 +19,15 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # Collects all core source files from the src directory
 file(GLOB_RECURSE SIM_SOURCES "src/*.cpp")
 
-# Main Simulation Library (Can be empty initially, handles our future classes)
+# Main Simulation Library
 if(SIM_SOURCES)
     add_library(sim_engine SHARED ${SIM_SOURCES})
 else()
-    # Fallback if src folder is still empty to prevent CMake from crashing
     add_library(sim_engine INTERFACE)
 endif()
 
-# Target Include Directories
-# Target Include Directories 
-target_include_directories(sim_engine 
-    PUBLIC 
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    INTERFACE 
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-)
-
-)
+# Target Include Directories (Fully Corrected Syntax)
+target_include_directories(sim_engine INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Main Executable Application
 add_executable(run_simulation apps/main.cpp)
