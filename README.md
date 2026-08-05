@@ -2,8 +2,6 @@
 
 A high-fidelity Cyber-Physical System (CPS) simulation engine modeling quadcopter flight dynamics. This project serves as a foundational platform for evaluating Proportional-Integral-Derivative (PID) flight control laws and digital-twin telemetry architectures.
 
-Targeted for research alignment with the **Old Dominion University (ODU) Modeling & Simulation Engineering PhD pipeline**.
-
 ## 📊 Core Physics & System Dynamics
 
 The simulator models vertical flight dynamics using basic Euler integration. The thrust command relies on a simple proportional tracking loop calculated from the system's altitude error state:
