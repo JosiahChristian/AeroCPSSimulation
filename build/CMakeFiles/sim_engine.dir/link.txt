@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\sim_engine.dir/objects.a
-C:\w64devkit\w64devkit\bin\ar.exe qc CMakeFiles\sim_engine.dir/objects.a @CMakeFiles\sim_engine.dir\objects1.rsp
-C:\w64devkit\w64devkit\bin\g++.exe -shared -o bin\libsim_engine.dll -Wl,--out-implib,libsim_engine.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -Wl,--whole-archive CMakeFiles\sim_engine.dir/objects.a -Wl,--no-whole-archive @CMakeFiles\sim_engine.dir\linkLibs.rsp
