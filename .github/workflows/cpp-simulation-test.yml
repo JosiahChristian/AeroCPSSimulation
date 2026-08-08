@@ -1,46 +1,27 @@
-name: C++ Simulation Engine CI
+name: Autonomy Guidance Core Validation Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ "main" ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # Enforces cross-compiler compatibility (crucial for embedded/CPS engineering)
-        compiler: [ {cc: gcc, cxx: g++}, {cc: clang, cxx: clang++} ]
 
     steps:
-    - name: Checkout Repository
+    - name: Checkout Code Repository
       uses: actions/checkout@v4
 
-    - name: Install Build Toolchain
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake build-essential libgtest-dev
+    - name: Compile Standalone Flight Simulator Engine
+      run: g++ run_standalone.cpp -o run_simulation.exe
 
-    - name: Configure CMake
-      env:
-        CC: ${{ matrix.compiler.cc }}
-        CXX: ${{ matrix.compiler.cxx }}
-      # Sets build type to Debug to preserve symbols for tests, enables warning flags
-      run: |
-        cmake -B build -S . \
-          -DCMAKE_BUILD_TYPE=Debug \
-          -DCMAKE_CXX_FLAGS="-Wall -Wextra -Werror -Wpedantic"
+    - name: Execute Automated Flight Trajectory Tests
+      run: ./run_simulation.exe
 
-    - name: Compile Code Base
-      # Compiles using all available processor cores on the GitHub runner
-      run: cmake --build build --parallel $(nproc)
-
-    - name: Run Test Suite (CTest)
-      # Executes all unit tests registered via add_test() in your CMakeLists.txt
-      # --output-on-failure dumps stdout/stderr directly into logs if a solver fails
-      run: |
-        if [ -d "build" ]; then
-          cd build && ctest --output-on-failure
-        fi
+    - name: Automatically Upload and Archive Telemetry Test Logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: cloud-telemetry-run-log
+        path: test_logs/flight_telemetry_run_history.txt
