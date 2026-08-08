@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="robot-banner.png" alt="Autonomous Robot Conceptual Design" width="100%">
+  <img src="PASTE_YOUR_COPIED_GITHUB_ATTACHMENTS_URL_HERE" alt="Autonomous Robot Conceptual Design" width="100%">
 </p>
 
 <p align="center">
