@@ -1,3 +1,13 @@
+<p align="center">
+  <img src="robot-banner.png" alt="Autonomous Robot Conceptual Design" width="100%">
+</p>
+
+<p align="center">
+  <em>Conceptual design overview for targeted physical autonomous chassis architecture.</em>
+</p>
+
+---
+
 # AeroCPSSimulation: 6-DOF Closed-Loop Flight Dynamics Engine
 
 ![Build Status](https://github.com)
