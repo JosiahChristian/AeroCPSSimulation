@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="PASTE_YOUR_COPIED_GITHUB_ATTACHMENTS_URL_HERE" alt="Autonomous Robot Conceptual Design" width="100%">
+  <img src="<img width="640" height="640" alt="Image" src="https://github.com/user-attachments/assets/454d7218-64e2-4482-a88f-b48850feb1f8" />" alt="Autonomous Robot Conceptual Design" width="100%">
 </p>
 
 <p align="center">
