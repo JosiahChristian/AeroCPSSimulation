@@ -8,6 +8,8 @@
 
 ---
 
+[![C++ Simulation Engine CI](https://github.com)](https://github.com)
+
 # AeroCPSSimulation: 6-DOF Closed-Loop Flight Dynamics Engine
 
 ![Build Status](https://github.com)
