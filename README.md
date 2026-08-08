@@ -8,12 +8,12 @@
 
 ---
 
-[![C++ Simulation Engine CI](https://github.com)](https://github.com)
+[![C++ Simulation Engine CI](https://github.com/christianjosiah2484-ai/AeroCPSSimulation/actions/workflows/cpp-simulation-test.yml)]
 
 # AeroCPSSimulation: 6-DOF Closed-Loop Flight Dynamics Engine
 
-![Build Status](https://github.com)
-[![Release](https://shields.io)](https://github.com)
+![Build Status](https://github.com/christianjosiah2484-ai/AeroCPSSimulation/actions/workflows/cpp-simulation-test.yml)
+[![Release](https://shields.io)](https://github.com/christianjosiah2484-ai/AeroCPSSimulation/releases/tag/v1.0.0)
 
 A high-fidelity computational aerospace simulation framework modeling vertical flight control laws and dynamic planetary environmental translations in C++. The engine utilizes discrete time-slice integrations to verify autonomous vehicle tracking parameters under variable physics conditions.
 
