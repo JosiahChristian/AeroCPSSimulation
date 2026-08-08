@@ -5,7 +5,7 @@
 
 A high-fidelity computational aerospace simulation framework modeling vertical flight control laws and dynamic planetary environmental translations in C++. The engine utilizes discrete time-slice integrations to verify autonomous vehicle tracking parameters under variable physics conditions.
 
-Targeted for control systems engineering alignment with the **Old Dominion University (ODU) PhD in Modeling and Simulation Engineering** pipeline.
+Targeted for control systems engineering alignment with the **PhD in Modeling and Simulation Engineering** pipeline.
 
 ## 🛸 Core Architectural Capabilities
 
