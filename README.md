@@ -1,13 +1,3 @@
-<p align="center">
-  <img width="640" height="640" alt="Image" src="https://github.com/user-attachments/assets/bbcfb374-35ca-4238-9c50-fb2f7c939487" />
-</p>
-
-<p align="center">
-  <em>Conceptual design overview for targeted physical autonomous chassis architecture.</em>
-</p>
-
----
-
 [![C++ Simulation Engine CI](https://github.com/christianjosiah2484-ai/AeroCPSSimulation/actions/workflows/cpp-simulation-test.yml)]
 
 # AeroCPSSimulation: 6-DOF Closed-Loop Flight Dynamics Engine
