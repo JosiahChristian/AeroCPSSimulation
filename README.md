@@ -12,12 +12,12 @@ This focused model provides a verified software foundation for later multi-axis 
 
 ## Capabilities
 
-- Configurable target altitude and planetary gravity
+- Command-line configuration for altitude, gravity, time step, step limit, and output path
 - Explicit simulation initialization and lifecycle validation
 - Gravity-compensated proportional control with velocity damping
 - Deterministic fixed-step state propagation
 - Ground-contact constraint
-- CSV telemetry written to standard output
+- Structured CSV telemetry with scenario metadata on every row
 - CMake and CTest integration
 - Linux and Windows CI validation
 - Strict compiler warnings on supported toolchains
@@ -57,14 +57,21 @@ Run the simulator:
 ./build/run_simulation
 ```
 
+Run a custom Mars-gravity scenario:
+
+```bash
+./build/run_simulation --target-altitude 75 --gravity -3.711 --time-step 0.05 --maximum-steps 750 --output telemetry-mars.csv
+```
+
+Use `--help` to display every supported option. Invalid, incomplete, non-finite, and out-of-range parameters are rejected before the simulation begins.
+
 Multi-configuration generators, including Visual Studio, place the executable under the selected configuration directory, such as `build/Release/run_simulation.exe`.
 
-The application emits machine-readable telemetry:
+The application writes machine-readable telemetry to `telemetry.csv` by default, or to the path supplied with `--output`:
 
 ```csv
-time_s,altitude_m,velocity_mps
-0.050,0.100,2.000
-0.100,0.294,3.860
+step,time_s,altitude_m,velocity_mps,target_altitude_m,gravity_mps2
+1,0.050000,0.100000,2.000000,50.000000,-9.810000
 ```
 
 ## Verification
@@ -76,16 +83,17 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - positive initial ascent response
 - convergence to the configured altitude tolerance
 - rejection of invalid time steps
+- default and custom scenario parsing
+- rejection of unknown, missing, non-finite, and out-of-range arguments
 
 ## Engineering Roadmap
 
 Development will proceed in measured layers:
 
-1. configurable scenario input and structured telemetry files
-2. additional numerical-integrator verification
-3. explicit vehicle and environment models
-4. multi-axis rigid-body state and dynamics
-5. performance measurement and integration with AeroCPSTelemetry
+1. additional numerical-integrator verification
+2. explicit vehicle and environment models
+3. multi-axis rigid-body state and dynamics
+4. performance measurement and integration with AeroCPSTelemetry
 
 ## Related Software
 
