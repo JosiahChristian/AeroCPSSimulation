@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AeroCPSSimulation VERSION 1.5.0 LANGUAGES CXX)
+project(AeroCPSSimulation VERSION 1.6.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(sim_engine STATIC
+    src/AerodynamicModel.cpp
     src/FlightModels.cpp
     src/NumericalIntegrator.cpp
     src/RigidBodyDynamics.cpp
@@ -41,4 +42,8 @@ if(BUILD_TESTING)
     add_executable(rigid_body_tests tests/test_rigid_body.cpp)
     target_link_libraries(rigid_body_tests PRIVATE sim_engine)
     add_test(NAME rigid_body_tests COMMAND rigid_body_tests)
+
+    add_executable(aerodynamic_tests tests/test_aerodynamics.cpp)
+    target_link_libraries(aerodynamic_tests PRIVATE sim_engine)
+    add_test(NAME aerodynamic_tests COMMAND aerodynamic_tests)
 endif()
