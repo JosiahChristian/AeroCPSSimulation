@@ -21,6 +21,8 @@ The operational command-line scenario remains the verified vertical-flight contr
 - 3D force and body-axis torque propagation
 - Singularity-free quaternion attitude propagation and body-to-world vector rotation
 - Coupled diagonal-inertia rotational dynamics
+- Configurable exponential atmosphere density and steady world-frame wind
+- Quadratic drag with validated reference area and drag coefficient
 - Ground-contact constraint
 - Structured CSV telemetry with scenario metadata on every row
 - CMake and CTest integration
@@ -43,7 +45,7 @@ Altitude and velocity telemetry
 
 The reusable engine coordinates separate vehicle-state, environment, controller, and integration responsibilities. The command-line application runs bounded scenarios, while independent regression executables validate controller behavior, scenario parsing, physical-model constraints, and numerical refinement.
 
-The independent rigid-body module provides a measured expansion path beyond vertical flight. It uses semi-implicit state updates, normalized quaternion attitude, world-frame forces, body-axis torques, diagonal inertia, and the rigid-body gyroscopic term. It intentionally does not yet claim aerodynamic coefficient models or a complete vehicle-specific flight model.
+The independent rigid-body module provides a measured expansion path beyond vertical flight. It uses semi-implicit state updates, normalized quaternion attitude, world-frame forces, body-axis torques, diagonal inertia, and the rigid-body gyroscopic term. The aerodynamic module adds altitude-dependent density, wind-relative airspeed, and quadratic drag. Lift, stability derivatives, and vehicle-specific moment coefficients remain future work.
 
 ## Build and Run
 
@@ -100,13 +102,16 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - mass, diagonal-inertia, state, force, torque, and time-step validation
 - quaternion unit-norm preservation and a known 90-degree frame rotation
 - asymmetric-inertia torque-free gyroscopic coupling against hand-computed values
+- exponential density at sea level and one scale height
+- quadratic drag magnitude and direction against hand-computed values
+- wind-relative drag reduction and zero-relative-airspeed behavior
 
 ## Engineering Roadmap
 
 Development will proceed in measured layers:
 
-1. aerodynamic force and moment models with coefficient validation
-2. vehicle-specific geometry and atmosphere configuration
+1. lift and aerodynamic moment coefficients with angle-of-attack validation
+2. vehicle-specific geometry and atmosphere scenario configuration
 3. performance measurement and integration with AeroCPSTelemetry
 
 ## Related Software
@@ -115,4 +120,4 @@ Development will proceed in measured layers:
 
 ## Status
 
-Active engineering project. Vertical-flight control plus quaternion-based, gyroscopically coupled multi-axis rigid-body propagation are implemented and validated. Vehicle-specific aerodynamics remain planned work.
+Active engineering project. Vertical-flight control, quaternion-based coupled rigid-body propagation, atmosphere density, wind-relative airspeed, and quadratic drag are implemented and validated. Vehicle-specific lift and moment models remain planned work.
