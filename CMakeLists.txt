@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AeroCPSSimulation VERSION 1.3.0 LANGUAGES CXX)
+project(AeroCPSSimulation VERSION 1.4.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(sim_engine STATIC
     src/FlightModels.cpp
     src/NumericalIntegrator.cpp
+    src/RigidBodyDynamics.cpp
     src/SimulationScenario.cpp
     src/SimulatorEngine.cpp
 )
@@ -36,4 +37,8 @@ if(BUILD_TESTING)
     add_executable(integrator_tests tests/test_integrator.cpp)
     target_link_libraries(integrator_tests PRIVATE sim_engine)
     add_test(NAME integrator_tests COMMAND integrator_tests)
+
+    add_executable(rigid_body_tests tests/test_rigid_body.cpp)
+    target_link_libraries(rigid_body_tests PRIVATE sim_engine)
+    add_test(NAME rigid_body_tests COMMAND rigid_body_tests)
 endif()
