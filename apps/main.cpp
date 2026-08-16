@@ -1,5 +1,6 @@
 #include "SimulationScenario.hpp"
 #include "SimulatorEngine.hpp"
+#include "TelemetryContract.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -33,12 +34,13 @@ int main(int argc, char* argv[]) {
     SimulatorEngine simulation(scenario.targetAltitude, scenario.gravity);
     simulation.initializeSystem();
 
-    telemetry << "step,time_s,altitude_m,velocity_mps,target_altitude_m,gravity_mps2\n"
+    telemetry << TelemetryContract::csvHeader << '\n'
               << std::fixed << std::setprecision(6);
     std::size_t step = 0;
     for (; step < scenario.maximumSteps && !simulation.isTrajectoryTrackingComplete(); ++step) {
         simulation.executeTimeSliceStep(scenario.timeStep);
-        telemetry << step + 1 << ','
+        telemetry << TelemetryContract::schemaVersion << ','
+                  << step + 1 << ','
                   << (step + 1) * scenario.timeStep << ','
                   << simulation.getCurrentAltitude() << ','
                   << simulation.getCurrentVelocity() << ','
