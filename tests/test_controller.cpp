@@ -12,6 +12,7 @@ bool nearlyEqual(double left, double right, double tolerance = 1e-9) {
 
 int main() {
     SimulatorEngine simulation(50.0, -9.81);
+    assert(nearlyEqual(simulation.getEnvironment().gravity(), -9.81));
     assert(nearlyEqual(simulation.getCurrentAltitude(), 0.0));
     assert(nearlyEqual(simulation.getCurrentVelocity(), 0.0));
     assert(!simulation.isTrajectoryTrackingComplete());
@@ -25,6 +26,7 @@ int main() {
     assert(rejectedUninitializedStep);
 
     simulation.initializeSystem();
+    assert(nearlyEqual(simulation.getVehicleState().altitude, 0.0));
     simulation.executeTimeSliceStep(0.05);
     assert(simulation.getCurrentAltitude() > 0.0);
     assert(simulation.getCurrentVelocity() > 0.0);
