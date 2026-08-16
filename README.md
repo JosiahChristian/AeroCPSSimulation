@@ -1,49 +1,55 @@
-[![C++ Simulation Engine CI](https://github.com/christianjosiah2484-ai/AeroCPSSimulation/actions/workflows/cpp-simulation-test.yml)]
+# AeroCPSSimulation
 
-# AeroCPSSimulation: 6-DOF Closed-Loop Flight Dynamics Engine
+A modular C++ flight-dynamics and feedback-control simulation for cyber-physical systems.
 
-![Build Status](https://github.com/christianjosiah2484-ai/AeroCPSSimulation/actions/workflows/cpp-simulation-test.yml)
-[![Release](https://shields.io)](https://github.com/christianjosiah2484-ai/AeroCPSSimulation/releases/tag/v1.0.0)
+## Overview
 
-A high-fidelity computational aerospace simulation framework modeling vertical flight control laws and dynamic planetary environmental translations in C++. The engine utilizes discrete time-slice integrations to verify autonomous vehicle tracking parameters under variable physics conditions.
+AeroCPSSimulation models aircraft state evolution and closed-loop control in a native C++ simulation environment. The codebase separates simulation state, vehicle dynamics, environmental parameters, and control behavior so individual components can be inspected and extended independently.
 
-Targeted for control systems engineering alignment with the **PhD in Modeling and Simulation Engineering** pipeline.
+The project emphasizes deterministic execution, reproducible native builds, numerical simulation, and testable systems code.
 
-## 🛸 Core Architectural Capabilities
+## Core Capabilities
 
-*   **Closed-Loop Feedback System:** Implements independent proportional control loop matrices to actively minimize systemic altitude error vectors.
-*   **Variable Planetary Physics:** Configured to process multi-variable gravity matrices—including structural parameters modeling Earth (-9.81 m/s²) and Mars (-3.711 m/s²) landing conditions.
-*   **Automated Continuous Integration:** Linked natively to an enterprise DevOps testing pipeline that automatically verifies cross-compiler compliance across GCC and Clang environments with zero caching overhead.
+- Six-degree-of-freedom state representation
+- Configurable simulation environment
+- Feedback-control behavior
+- Numerical state propagation
+- Modular C++ components
+- CMake-based builds
+- Automated validation
 
-## 🛠️ Local Compilation Blueprint
+## Architecture
 
-The project infrastructure uses the modern CMake build ecosystem to manage code compilation across distinct hardware platforms.
+Environment / Configuration
+          |
+      Vehicle State
+          |
+     Flight Dynamics
+          |
+  Numerical Integration
+          |
+      Controller
+          |
+     Updated State
 
-### Prerequisites
-* CMake 3.22+
-* C++17 Compliant Compiler (GCC / MinGW / Clang)
+## Technology
 
-### Execution Workspace Commands
-Run this configuration macro loop inside your local PowerShell or terminal console window to compile and launch your binaries:
+**Language:** C++  
+**Build:** CMake  
+**Domain:** Flight dynamics, feedback control, numerical simulation, cyber-physical systems  
+**Engineering:** Modular native code, reproducible builds, automated validation
 
-```bash
-# 1. Generate local build system configuration files
-cmake -B build -S . -G "MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_MAKE_PROGRAM=make
+## Build
 
-# 2. Compile the executable binary file
-cmake --build build
+    cmake -S . -B build
+    cmake --build build
 
-# 3. Launch the flight simulation engine
-.\build\bin\run_simulation.exe
-```
+Run the generated simulation executable from the build directory appropriate to your platform and generator.
 
-## 📂 Structural Tree Layout
+## Engineering Goals
 
-```text
-AeroCPSSimulation/
-├── .github/workflows/  --> Cloud automation configuration scripts
-├── include/            --> Class blueprint declarations (.hpp)
-├── src/                --> Algorithmic math implementations (.cpp)
-├── apps/               --> Execution runtime trigger (main.cpp)
-└── CMakeLists.txt      --> Master compilation rules file
-```
+The project remains intentionally focused as a simulation engine rather than a general-purpose flight simulator. Continued development prioritizes stronger verification, explicit numerical assumptions, configurable scenarios, structured telemetry output, and measured performance before increasing model complexity.
+
+## Related Software
+
+**AeroCPSTelemetry** provides a separate browser-based visualization surface for aerospace telemetry and flight-state behavior.
