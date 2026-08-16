@@ -25,6 +25,8 @@ The operational command-line scenario remains the verified vertical-flight contr
 - Quadratic drag with validated reference area and drag coefficient
 - Ground-contact constraint
 - Structured CSV telemetry with scenario metadata on every row
+- Versioned `aerocps.telemetry.v1` contract for downstream consumers
+- Cross-platform performance smoke executable
 - CMake and CTest integration
 - Linux and Windows CI validation
 - Strict compiler warnings on supported toolchains
@@ -79,9 +81,11 @@ Multi-configuration generators, including Visual Studio, place the executable un
 The application writes machine-readable telemetry to `telemetry.csv` by default, or to the path supplied with `--output`:
 
 ```csv
-step,time_s,altitude_m,velocity_mps,target_altitude_m,gravity_mps2
-1,0.050000,0.100000,2.000000,50.000000,-9.810000
+schema_version,step,time_s,altitude_m,velocity_mps,target_altitude_m,gravity_mps2
+aerocps.telemetry.v1,1,0.050000,0.100000,2.000000,50.000000,-9.810000
 ```
+
+The field definitions, units, and compatibility policy are documented in [`docs/telemetry-contract.md`](docs/telemetry-contract.md) for integration with AeroCPSTelemetry and other consumers.
 
 ## Verification
 
@@ -105,6 +109,8 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - exponential density at sea level and one scale height
 - quadratic drag magnitude and direction against hand-computed values
 - wind-relative drag reduction and zero-relative-airspeed behavior
+- exact telemetry schema version and required field contract
+- finite-state 250,000-step rigid-body performance smoke run
 
 ## Engineering Roadmap
 
@@ -112,7 +118,7 @@ Development will proceed in measured layers:
 
 1. lift and aerodynamic moment coefficients with angle-of-attack validation
 2. vehicle-specific geometry and atmosphere scenario configuration
-3. performance measurement and integration with AeroCPSTelemetry
+3. direct ingestion integration with AeroCPSTelemetry
 
 ## Related Software
 
