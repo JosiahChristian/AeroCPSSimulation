@@ -23,7 +23,7 @@ void RigidBodyDynamics::advance(
     Vector3 netTorqueBodyNewtonMeters,
     double timeStep) {
     if (!state.positionMeters.isFinite() || !state.velocityMetersPerSecond.isFinite() ||
-        !state.orientationRadians.isFinite() || !state.angularVelocityRadiansPerSecond.isFinite()) {
+        !state.attitudeBodyToWorld.isFinite() || !state.angularVelocityRadiansPerSecond.isFinite()) {
         throw std::invalid_argument("rigid-body state must be finite");
     }
     if (!netForceWorldNewtons.isFinite() || !netTorqueBodyNewtonMeters.isFinite()) {
@@ -35,14 +35,33 @@ void RigidBodyDynamics::advance(
 
     const Vector3 linearAcceleration = netForceWorldNewtons / properties.mass();
     const Vector3 inertia = properties.diagonalInertia();
+    const Vector3 angularMomentum{
+        inertia.x * state.angularVelocityRadiansPerSecond.x,
+        inertia.y * state.angularVelocityRadiansPerSecond.y,
+        inertia.z * state.angularVelocityRadiansPerSecond.z
+    };
+    const Vector3 effectiveTorque =
+        netTorqueBodyNewtonMeters - cross(state.angularVelocityRadiansPerSecond, angularMomentum);
     const Vector3 angularAcceleration{
-        netTorqueBodyNewtonMeters.x / inertia.x,
-        netTorqueBodyNewtonMeters.y / inertia.y,
-        netTorqueBodyNewtonMeters.z / inertia.z
+        effectiveTorque.x / inertia.x,
+        effectiveTorque.y / inertia.y,
+        effectiveTorque.z / inertia.z
     };
 
     state.velocityMetersPerSecond += linearAcceleration * timeStep;
     state.positionMeters += state.velocityMetersPerSecond * timeStep;
     state.angularVelocityRadiansPerSecond += angularAcceleration * timeStep;
-    state.orientationRadians += state.angularVelocityRadiansPerSecond * timeStep;
+
+    const Quaternion angularRate{
+        0.0,
+        state.angularVelocityRadiansPerSecond.x,
+        state.angularVelocityRadiansPerSecond.y,
+        state.angularVelocityRadiansPerSecond.z
+    };
+    const Quaternion derivative = state.attitudeBodyToWorld * angularRate;
+    state.attitudeBodyToWorld.w += 0.5 * derivative.w * timeStep;
+    state.attitudeBodyToWorld.x += 0.5 * derivative.x * timeStep;
+    state.attitudeBodyToWorld.y += 0.5 * derivative.y * timeStep;
+    state.attitudeBodyToWorld.z += 0.5 * derivative.z * timeStep;
+    state.attitudeBodyToWorld.normalize();
 }

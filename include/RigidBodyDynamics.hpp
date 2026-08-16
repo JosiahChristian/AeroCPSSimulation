@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Quaternion.hpp"
 #include "Vector3.hpp"
 
 struct RigidBodyState {
     Vector3 positionMeters;
     Vector3 velocityMetersPerSecond;
-    Vector3 orientationRadians;
+    Quaternion attitudeBodyToWorld;
     Vector3 angularVelocityRadiansPerSecond;
 };
 

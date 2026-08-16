@@ -31,9 +31,22 @@ int main() {
     assert(nearlyEqual(state.angularVelocityRadiansPerSecond.x, 0.5));
     assert(nearlyEqual(state.angularVelocityRadiansPerSecond.y, 0.5));
     assert(nearlyEqual(state.angularVelocityRadiansPerSecond.z, 0.5));
-    assert(nearlyEqual(state.orientationRadians.x, 0.25));
-    assert(nearlyEqual(state.orientationRadians.y, 0.25));
-    assert(nearlyEqual(state.orientationRadians.z, 0.25));
+    assert(nearlyEqual(state.attitudeBodyToWorld.squaredNorm(), 1.0));
+
+    const double pi = std::acos(-1.0);
+    const Quaternion quarterTurn = Quaternion::fromAxisAngle({0.0, 0.0, 1.0}, pi / 2.0);
+    const Vector3 rotated = rotateBodyToWorld(quarterTurn, {1.0, 0.0, 0.0});
+    assert(nearlyEqual(rotated.x, 0.0));
+    assert(nearlyEqual(rotated.y, 1.0));
+    assert(nearlyEqual(rotated.z, 0.0));
+
+    RigidBodyState coupledState;
+    coupledState.angularVelocityRadiansPerSecond = {1.0, 2.0, 3.0};
+    RigidBodyDynamics::advance(coupledState, properties, {}, {}, 0.01);
+    assert(nearlyEqual(coupledState.angularVelocityRadiansPerSecond.x, 0.88));
+    assert(nearlyEqual(coupledState.angularVelocityRadiansPerSecond.y, 2.045));
+    assert(nearlyEqual(coupledState.angularVelocityRadiansPerSecond.z, 2.995));
+    assert(nearlyEqual(coupledState.attitudeBodyToWorld.squaredNorm(), 1.0));
 
     bool rejectedMass = false;
     try {
