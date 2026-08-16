@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AeroCPSSimulation VERSION 1.2.0 LANGUAGES CXX)
+project(AeroCPSSimulation VERSION 1.3.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(sim_engine STATIC
+    src/FlightModels.cpp
+    src/NumericalIntegrator.cpp
     src/SimulationScenario.cpp
     src/SimulatorEngine.cpp
 )
@@ -30,4 +32,8 @@ if(BUILD_TESTING)
     add_executable(scenario_tests tests/test_scenario.cpp)
     target_link_libraries(scenario_tests PRIVATE sim_engine)
     add_test(NAME scenario_tests COMMAND scenario_tests)
+
+    add_executable(integrator_tests tests/test_integrator.cpp)
+    target_link_libraries(integrator_tests PRIVATE sim_engine)
+    add_test(NAME integrator_tests COMMAND integrator_tests)
 endif()
