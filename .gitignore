@@ -21,6 +21,7 @@ Makefile
 # Generated telemetry and logs
 test_logs/
 *.log
+telemetry*.csv
 
 # Editor and platform files
 .vscode/
