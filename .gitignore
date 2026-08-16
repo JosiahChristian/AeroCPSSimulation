@@ -1,0 +1,29 @@
+# CMake build trees
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+
+# Compiled artifacts
+*.exe
+*.out
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+
+# Generated telemetry and logs
+test_logs/
+*.log
+
+# Editor and platform files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
