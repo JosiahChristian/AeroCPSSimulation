@@ -1,32 +1,21 @@
-#ifndef SIMULATOR_ENGINE_HPP
-#define SIMULATOR_ENGINE_HPP
-
-#include <string>
-#include <vector>
+#pragma once
 
 class SimulatorEngine {
 public:
-    // Constructor to initialize planetary physics constraints
     SimulatorEngine(double targetAltitude, double planetaryGravity);
 
-    // Dynamic execution methods
     void initializeSystem();
     void executeTimeSliceStep(double timeStep);
-    bool isTrajectoryTrackingComplete() const;
+    [[nodiscard]] bool isTrajectoryTrackingComplete() const noexcept;
 
-    // Data tracking getter methods
-    double getCurrentAltitude() const { return currentAltitude; }
-    double getCurrentVelocity() const { return currentVelocity; }
-    double getTargetAltitude() const { return targetAltitude; }
+    [[nodiscard]] double getCurrentAltitude() const noexcept { return currentAltitude_; }
+    [[nodiscard]] double getCurrentVelocity() const noexcept { return currentVelocity_; }
+    [[nodiscard]] double getTargetAltitude() const noexcept { return targetAltitude_; }
 
 private:
-    // Core physical flight kinematics variables
-    double targetAltitude;
-    double currentAltitude;
-    double currentVelocity;
-    double gravityConstant;
-    int currentFlightStep;
-    bool systemInitialized;
+    double targetAltitude_;
+    double currentAltitude_{0.0};
+    double currentVelocity_{0.0};
+    double gravityConstant_;
+    bool systemInitialized_{false};
 };
-
-#endif // SIMULATOR_ENGINE_HPP
