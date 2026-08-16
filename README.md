@@ -8,7 +8,7 @@ A deterministic C++ flight-control simulation for exercising cyber-physical-syst
 
 The current release models one-dimensional vertical flight. A damped proportional controller combines gravity compensation with altitude-error feedback, and the vehicle state is propagated with fixed-step Euler integration.
 
-This focused model provides a verified software foundation for later multi-axis dynamics without presenting planned capabilities as already implemented.
+The operational command-line scenario remains the verified vertical-flight controller. A separate multi-axis dynamics foundation now propagates 3D position, velocity, Euler-angle orientation, and angular velocity under applied force and torque. Aerodynamic coupling and full attitude kinematics remain future work.
 
 ## Capabilities
 
@@ -17,6 +17,8 @@ This focused model provides a verified software foundation for later multi-axis 
 - Gravity-compensated proportional control with velocity damping
 - Deterministic fixed-step state propagation
 - Explicit vehicle-state, environment, and numerical-integrator components
+- Validated multi-axis rigid-body state, mass, and diagonal-inertia models
+- 3D force and body-axis torque propagation
 - Ground-contact constraint
 - Structured CSV telemetry with scenario metadata on every row
 - CMake and CTest integration
@@ -38,6 +40,8 @@ Altitude and velocity telemetry
 ```
 
 The reusable engine coordinates separate vehicle-state, environment, controller, and integration responsibilities. The command-line application runs bounded scenarios, while independent regression executables validate controller behavior, scenario parsing, physical-model constraints, and numerical refinement.
+
+The independent rigid-body module provides a measured expansion path beyond vertical flight. It currently uses semi-implicit updates with world-frame forces, body-axis torques, Euler-angle orientation, and diagonal inertia. It intentionally does not yet claim aerodynamic frame transformations, gyroscopic cross-coupling, or singularity-free quaternion attitude propagation.
 
 ## Build and Run
 
@@ -89,13 +93,17 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - exact velocity propagation under constant acceleration
 - first-order position-error reduction as the integration time step is halved
 - environment-model gravity constraints
+- independent force response across three translational axes
+- independent torque response across three rotational axes
+- mass, diagonal-inertia, state, force, torque, and time-step validation
 
 ## Engineering Roadmap
 
 Development will proceed in measured layers:
 
-1. multi-axis rigid-body state and dynamics
-2. performance measurement and integration with AeroCPSTelemetry
+1. quaternion attitude propagation and coupled rotational dynamics
+2. aerodynamic force and moment models with frame transformations
+3. performance measurement and integration with AeroCPSTelemetry
 
 ## Related Software
 
@@ -103,4 +111,4 @@ Development will proceed in measured layers:
 
 ## Status
 
-Active engineering project. The vertical-flight simulation foundation is implemented and validated; multi-axis flight dynamics remain planned work.
+Active engineering project. Vertical-flight control and the uncoupled multi-axis rigid-body foundation are implemented and validated. Coupled aerodynamic 6-DOF behavior remains planned work.
