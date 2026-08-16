@@ -26,3 +26,15 @@ struct Vector3 {
 [[nodiscard]] inline Vector3 operator/(const Vector3& vector, double scalar) noexcept {
     return {vector.x / scalar, vector.y / scalar, vector.z / scalar};
 }
+
+[[nodiscard]] inline Vector3 operator-(const Vector3& left, const Vector3& right) noexcept {
+    return {left.x - right.x, left.y - right.y, left.z - right.z};
+}
+
+[[nodiscard]] inline Vector3 cross(const Vector3& left, const Vector3& right) noexcept {
+    return {
+        left.y * right.z - left.z * right.y,
+        left.z * right.x - left.x * right.z,
+        left.x * right.y - left.y * right.x
+    };
+}
