@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AeroCPSSimulation VERSION 1.6.0 LANGUAGES CXX)
+project(AeroCPSSimulation VERSION 1.7.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -25,6 +25,9 @@ endif()
 add_executable(run_simulation apps/main.cpp)
 target_link_libraries(run_simulation PRIVATE sim_engine)
 
+add_executable(benchmark_simulation apps/benchmark.cpp)
+target_link_libraries(benchmark_simulation PRIVATE sim_engine)
+
 include(CTest)
 if(BUILD_TESTING)
     add_executable(sim_engine_tests tests/test_controller.cpp)
@@ -46,4 +49,11 @@ if(BUILD_TESTING)
     add_executable(aerodynamic_tests tests/test_aerodynamics.cpp)
     target_link_libraries(aerodynamic_tests PRIVATE sim_engine)
     add_test(NAME aerodynamic_tests COMMAND aerodynamic_tests)
+
+    add_executable(telemetry_contract_tests tests/test_telemetry_contract.cpp)
+    target_link_libraries(telemetry_contract_tests PRIVATE sim_engine)
+    add_test(NAME telemetry_contract_tests COMMAND telemetry_contract_tests)
+
+    add_test(NAME performance_smoke COMMAND benchmark_simulation)
+    set_tests_properties(performance_smoke PROPERTIES TIMEOUT 30)
 endif()
