@@ -16,6 +16,7 @@ This focused model provides a verified software foundation for later multi-axis 
 - Explicit simulation initialization and lifecycle validation
 - Gravity-compensated proportional control with velocity damping
 - Deterministic fixed-step state propagation
+- Explicit vehicle-state, environment, and numerical-integrator components
 - Ground-contact constraint
 - Structured CSV telemetry with scenario metadata on every row
 - CMake and CTest integration
@@ -27,16 +28,16 @@ This focused model provides a verified software foundation for later multi-axis 
 ```text
 Scenario parameters
         |
-SimulatorEngine
+Vehicle state + environment
         |
 Feedback controller
         |
-State integration
+Semi-implicit Euler integrator
         |
 Altitude and velocity telemetry
 ```
 
-The reusable engine lives in `src/SimulatorEngine.cpp` with its public interface in `include/SimulatorEngine.hpp`. The command-line application in `apps/main.cpp` runs a bounded scenario, while `tests/test_controller.cpp` validates lifecycle rules, state evolution, convergence, and invalid-input handling.
+The reusable engine coordinates separate vehicle-state, environment, controller, and integration responsibilities. The command-line application runs bounded scenarios, while independent regression executables validate controller behavior, scenario parsing, physical-model constraints, and numerical refinement.
 
 ## Build and Run
 
@@ -85,15 +86,16 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - rejection of invalid time steps
 - default and custom scenario parsing
 - rejection of unknown, missing, non-finite, and out-of-range arguments
+- exact velocity propagation under constant acceleration
+- first-order position-error reduction as the integration time step is halved
+- environment-model gravity constraints
 
 ## Engineering Roadmap
 
 Development will proceed in measured layers:
 
-1. additional numerical-integrator verification
-2. explicit vehicle and environment models
-3. multi-axis rigid-body state and dynamics
-4. performance measurement and integration with AeroCPSTelemetry
+1. multi-axis rigid-body state and dynamics
+2. performance measurement and integration with AeroCPSTelemetry
 
 ## Related Software
 
