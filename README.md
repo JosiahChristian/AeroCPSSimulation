@@ -25,6 +25,7 @@ The operational command-line scenario remains the verified vertical-flight contr
 - Quadratic drag with validated reference area and drag coefficient
 - Configurable linear lift, induced drag, and pitching-moment coefficient model
 - Explicit angle-of-attack validity envelope and bounded lift coefficient
+- Nondimensional pitch-rate aerodynamic damping derivative
 - Configurable sideslip, roll-rate, and yaw-rate lateral-directional derivatives
 - Combined six-axis aerodynamic load assembly and body-to-world force application
 - Wind-relative body-frame airspeed, angle-of-attack, and sideslip derivation
@@ -165,6 +166,7 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - finite-state 250,000-step rigid-body performance smoke run
 - hand-calculated lift, induced-drag, and pitching-moment coefficient case
 - extreme positive and negative angle-of-attack saturation with finite loads
+- hand-calculated pitch-rate damping moment
 - hand-calculated side-force, rolling-moment, and yawing-moment derivative case
 - exact six-axis load composition and a known 90-degree body-force frame transformation
 - wind-relative air-data derivation and body/world quaternion round-trip cases
@@ -176,7 +178,7 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 
 Development will proceed in measured layers:
 
-1. coupled six-degree-of-freedom perturbation-recovery control
+1. pitch-damped coupled six-degree-of-freedom perturbation recovery
 2. direct ingestion integration with AeroCPSTelemetry
 
 ## Related Software
