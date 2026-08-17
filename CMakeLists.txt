@@ -25,6 +25,7 @@ add_library(sim_engine STATIC
     src/FixedWingScenario.cpp
     src/FlightModels.cpp
     src/NumericalIntegrator.cpp
+    src/PitchController.cpp
     src/RigidBodyDynamics.cpp
     src/SimulationScenario.cpp
     src/SimulatorEngine.cpp
@@ -79,6 +80,10 @@ if(BUILD_TESTING)
     add_executable(fixed_wing_reference_tests tests/test_fixed_wing_reference.cpp)
     target_link_libraries(fixed_wing_reference_tests PRIVATE sim_engine)
     add_test(NAME fixed_wing_reference_tests COMMAND fixed_wing_reference_tests)
+
+    add_executable(pitch_controller_tests tests/test_pitch_controller.cpp)
+    target_link_libraries(pitch_controller_tests PRIVATE sim_engine)
+    add_test(NAME pitch_controller_tests COMMAND pitch_controller_tests)
 
     add_executable(fixed_wing_scenario_tests tests/test_fixed_wing_scenario.cpp)
     target_link_libraries(fixed_wing_scenario_tests PRIVATE sim_engine)
