@@ -40,6 +40,18 @@ int main() {
     assert(nearlyEqual(rotated.y, 1.0));
     assert(nearlyEqual(rotated.z, 0.0));
 
+    RigidBodyState bodyLoadState;
+    bodyLoadState.attitudeBodyToWorld = quarterTurn;
+    RigidBodyDynamics::advanceBodyLoads(
+        bodyLoadState,
+        properties,
+        {2.0, 0.0, 0.0},
+        {},
+        0.5);
+    assert(nearlyEqual(bodyLoadState.velocityMetersPerSecond.x, 0.0));
+    assert(nearlyEqual(bodyLoadState.velocityMetersPerSecond.y, 0.5));
+    assert(nearlyEqual(bodyLoadState.velocityMetersPerSecond.z, 0.0));
+
     RigidBodyState coupledState;
     coupledState.angularVelocityRadiansPerSecond = {1.0, 2.0, 3.0};
     RigidBodyDynamics::advance(coupledState, properties, {}, {}, 0.01);
