@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AeroCPSSimulation VERSION 1.13.0 LANGUAGES CXX)
+project(AeroCPSSimulation VERSION 1.14.0 LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -24,6 +24,7 @@ add_library(sim_engine STATIC
     src/FixedWingReference.cpp
     src/FlightModels.cpp
     src/NumericalIntegrator.cpp
+    src/PitchController.cpp
     src/RigidBodyDynamics.cpp
     src/SimulationScenario.cpp
     src/SimulatorEngine.cpp
@@ -75,6 +76,10 @@ if(BUILD_TESTING)
     add_executable(fixed_wing_reference_tests tests/test_fixed_wing_reference.cpp)
     target_link_libraries(fixed_wing_reference_tests PRIVATE sim_engine)
     add_test(NAME fixed_wing_reference_tests COMMAND fixed_wing_reference_tests)
+
+    add_executable(pitch_controller_tests tests/test_pitch_controller.cpp)
+    target_link_libraries(pitch_controller_tests PRIVATE sim_engine)
+    add_test(NAME pitch_controller_tests COMMAND pitch_controller_tests)
 
     add_test(NAME performance_smoke COMMAND benchmark_simulation)
     set_tests_properties(performance_smoke PROPERTIES TIMEOUT 30)
