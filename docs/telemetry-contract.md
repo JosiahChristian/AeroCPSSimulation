@@ -24,3 +24,18 @@ Every data row carries the schema version so downstream consumers can reject inc
 - New optional fields require a new documented schema version if their placement changes the CSV layout.
 - Consumers such as AeroCPSTelemetry should verify `schema_version` before parsing numeric fields.
 - Non-finite numeric values are invalid.
+
+## Fixed-Wing Six-Degree-of-Freedom Contract
+
+The `run_fixed_wing` executable emits `aerocps.fixed-wing.v1`. Each row records:
+
+- scenario step and elapsed time
+- world-frame position and velocity in SI units
+- the normalized body-to-world quaternion in `w, x, y, z` order
+- body-frame roll, pitch, and yaw rates in radians per second
+- wind-relative airspeed, angle of attack, and sideslip angle
+
+The exact header is defined by `FixedWingTelemetryContract.hpp`. The same
+compatibility rule applies: additive fields are permitted, but removing,
+renaming, reordering, or changing a required field requires a new schema
+version.

@@ -29,6 +29,7 @@ The operational command-line scenario remains the verified vertical-flight contr
 - Combined six-axis aerodynamic load assembly and body-to-world force application
 - Wind-relative body-frame airspeed, angle-of-attack, and sideslip derivation
 - Representative 8 kg small fixed-wing reference configuration with verified level-flight trim
+- Bounded fixed-wing command-line execution with versioned 6-DOF CSV telemetry
 - Ground-contact constraint
 - Structured CSV telemetry with scenario metadata on every row
 - Versioned `aerocps.telemetry.v1` contract for downstream consumers
@@ -99,6 +100,17 @@ Run a custom Mars-gravity scenario:
 ./build/run_simulation --target-altitude 75 --gravity -3.711 --time-step 0.05 --maximum-steps 750 --output telemetry-mars.csv
 ```
 
+Run the representative fixed-wing trim scenario for 30 seconds:
+
+```bash
+./build/run_fixed_wing --duration 30 --time-step 0.01 --output fixed-wing.csv
+```
+
+The fixed-wing runner deliberately enforces a maximum 300-second duration, a
+maximum 0.05-second time step, and a one-million-step ceiling. It exercises the
+validated trim trajectory without implying perturbation recovery beyond the
+current linear aerodynamic model's validated envelope.
+
 Use `--help` to display every supported option. Invalid, incomplete, non-finite, and out-of-range parameters are rejected before the simulation begins.
 
 Multi-configuration generators, including Visual Studio, place the executable under the selected configuration directory, such as `build/Release/run_simulation.exe`.
@@ -142,14 +154,14 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - exact six-axis load composition and a known 90-degree body-force frame transformation
 - wind-relative air-data derivation and body/world quaternion round-trip cases
 - 10-second fixed-wing trim propagation with bounded position, velocity, attitude, and angular-rate residuals
+- fixed-wing scenario parsing, execution bounds, and exact 6-DOF telemetry schema
 
 ## Engineering Roadmap
 
 Development will proceed in measured layers:
 
 1. bounded perturbation-recovery control for the fixed-wing reference
-2. command-line six-degree-of-freedom scenario selection and telemetry
-3. direct ingestion integration with AeroCPSTelemetry
+2. direct ingestion integration with AeroCPSTelemetry
 
 ## Related Software
 
@@ -157,4 +169,4 @@ Development will proceed in measured layers:
 
 ## Status
 
-Active engineering project. Vertical-flight control, quaternion-based coupled rigid-body propagation, wind-relative air-data derivation, configurable six-axis aerodynamic loads, frame-aware load application, and a representative trimmed small fixed-wing integration fixture are implemented and validated. Real-aircraft identification and validation remain outside the current scope.
+Active engineering project. Vertical-flight control, quaternion-based coupled rigid-body propagation, wind-relative air-data derivation, configurable six-axis aerodynamic loads, frame-aware load application, and a representative trimmed small fixed-wing command-line scenario are implemented and validated. Real-aircraft identification and validation remain outside the current scope.

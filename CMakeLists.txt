@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AeroCPSSimulation VERSION 1.13.0 LANGUAGES CXX)
+project(AeroCPSSimulation VERSION 1.14.0 LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -22,6 +22,7 @@ endif()
 add_library(sim_engine STATIC
     src/AerodynamicModel.cpp
     src/FixedWingReference.cpp
+    src/FixedWingScenario.cpp
     src/FlightModels.cpp
     src/NumericalIntegrator.cpp
     src/RigidBodyDynamics.cpp
@@ -45,6 +46,9 @@ target_link_libraries(run_simulation PRIVATE sim_engine)
 
 add_executable(benchmark_simulation apps/benchmark.cpp)
 target_link_libraries(benchmark_simulation PRIVATE sim_engine)
+
+add_executable(run_fixed_wing apps/fixed_wing.cpp)
+target_link_libraries(run_fixed_wing PRIVATE sim_engine)
 
 include(CTest)
 if(BUILD_TESTING)
@@ -76,11 +80,19 @@ if(BUILD_TESTING)
     target_link_libraries(fixed_wing_reference_tests PRIVATE sim_engine)
     add_test(NAME fixed_wing_reference_tests COMMAND fixed_wing_reference_tests)
 
+    add_executable(fixed_wing_scenario_tests tests/test_fixed_wing_scenario.cpp)
+    target_link_libraries(fixed_wing_scenario_tests PRIVATE sim_engine)
+    add_test(NAME fixed_wing_scenario_tests COMMAND fixed_wing_scenario_tests)
+
+    add_executable(fixed_wing_telemetry_contract_tests tests/test_fixed_wing_telemetry_contract.cpp)
+    target_link_libraries(fixed_wing_telemetry_contract_tests PRIVATE sim_engine)
+    add_test(NAME fixed_wing_telemetry_contract_tests COMMAND fixed_wing_telemetry_contract_tests)
+
     add_test(NAME performance_smoke COMMAND benchmark_simulation)
     set_tests_properties(performance_smoke PROPERTIES TIMEOUT 30)
 endif()
 
-install(TARGETS sim_engine run_simulation benchmark_simulation
+install(TARGETS sim_engine run_simulation run_fixed_wing benchmark_simulation
     EXPORT AeroCPSSimulationTargets
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
