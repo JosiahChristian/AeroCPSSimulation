@@ -75,6 +75,10 @@ double FixedWingReference::trimThrustNewtons() {
            std::tan(trimAngleOfAttackRadians) * loads.forceBodyNewtons.z;
 }
 
+PitchController FixedWingReference::pitchController() {
+    return {8.0, 4.0, 2.0};
+}
+
 void FixedWingReference::advanceTrimStep(RigidBodyState& state, double timeStep) {
     auto loads = AerodynamicModel::loadsFromWorldState(
         state.velocityMetersPerSecond,
