@@ -29,9 +29,31 @@ private:
 
 class AerodynamicModel {
 public:
+    struct LongitudinalLoads {
+        Vector3 forceBodyNewtons;
+        Vector3 momentBodyNewtonMeters;
+    };
+
+    struct LongitudinalCoefficients {
+        double zeroAngleLift;
+        double liftSlopePerRadian;
+        double zeroLiftDrag;
+        double inducedDragFactor;
+        double zeroAnglePitchMoment;
+        double pitchMomentSlopePerRadian;
+        double referenceChordMeters;
+    };
+
     [[nodiscard]] static Vector3 dragForceWorld(
         Vector3 vehicleVelocityWorldMetersPerSecond,
         double altitudeMeters,
         const AtmosphereModel& atmosphere,
         const AerodynamicProperties& properties);
+
+    [[nodiscard]] static LongitudinalLoads longitudinalLoads(
+        double airspeedMetersPerSecond,
+        double angleOfAttackRadians,
+        double densityKilogramsPerCubicMeter,
+        const AerodynamicProperties& properties,
+        const LongitudinalCoefficients& coefficients);
 };
