@@ -28,13 +28,13 @@ The operational command-line scenario remains the verified vertical-flight contr
 - Nondimensional pitch-rate aerodynamic damping derivative
 - Configurable sideslip, roll-rate, and yaw-rate lateral-directional derivatives
 - Combined six-axis aerodynamic load assembly and body-to-world force application
-- Wind-relative body-frame airspeed, angle-of-attack, and sideslip derivation
+- Wind-relative body-frame airspeed, angle of attack, and sideslip derivation
 - Representative 8 kg small fixed-wing reference configuration with verified level-flight trim
 - Saturation-bounded pitch-axis PD controller with isolated inertia-response validation
 - Bounded fixed-wing command-line execution with versioned 6-DOF CSV telemetry
 - Ground-contact constraint
 - Structured CSV telemetry with scenario metadata on every row
-- Versioned `aerocps.telemetry.v1` contract for downstream consumers
+- Versioned `aerocps.telemetry.v1` contract consumed directly by AeroCPSTelemetry
 - Cross-platform performance smoke executable
 - CMake and CTest integration
 - Linux and Windows CI validation
@@ -52,6 +52,10 @@ Feedback controller
 Semi-implicit Euler integrator
         |
 Altitude and velocity telemetry
+        |
+        | aerocps.telemetry.v1 CSV
+        v
+AeroCPSTelemetry browser playback
 ```
 
 The reusable engine coordinates separate vehicle-state, environment, controller, and integration responsibilities. The command-line application runs bounded scenarios, while independent regression executables validate controller behavior, scenario parsing, physical-model constraints, and numerical refinement.
@@ -62,17 +66,9 @@ The included `FixedWingReference` is a representative engineering fixture, not a
 
 ### Modeling Boundaries
 
-The pitch controller is currently validated as an isolated, saturation-bounded
-moment controller. It is not yet connected to the coupled fixed-wing runner and
-does not claim closed-loop flight recovery. Coupled recovery requires validated
-pitch-rate damping, longitudinal control authority, and an explicit operating
-envelope; those are tracked as engineering work rather than inferred from the
-isolated controller test.
+The pitch controller is currently validated as an isolated, saturation-bounded moment controller. It is not yet connected to the coupled fixed-wing runner and does not claim closed-loop flight recovery. Coupled recovery requires validated pitch-rate damping, longitudinal control authority, and an explicit operating envelope; those are tracked as engineering work rather than inferred from the isolated controller test.
 
-The fixed-wing coefficients remain representative fixtures rather than
-identified aircraft data. The runner therefore demonstrates deterministic
-software integration and trim propagation, not certification-grade flight
-prediction.
+The fixed-wing coefficients remain representative fixtures rather than identified aircraft data. The runner therefore demonstrates deterministic software integration and trim propagation, not certification-grade flight prediction.
 
 ## Build and Run
 
@@ -88,21 +84,15 @@ cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure
 ```
 
-For a reproducible Ninja build, use `cmake --preset default`,
-`cmake --build --preset default`, and `ctest --preset default`. A separate
-`sanitizers` preset enables AddressSanitizer and UndefinedBehaviorSanitizer on
-GCC and Clang; CI runs that preset on every push and pull request.
+For a reproducible Ninja build, use `cmake --preset default`, `cmake --build --preset default`, and `ctest --preset default`. A separate `sanitizers` preset enables AddressSanitizer and UndefinedBehaviorSanitizer on GCC and Clang; CI runs that preset on every push and pull request.
 
-Install the simulator, benchmark, reusable `sim_engine` library, public headers,
-and CMake package metadata with:
+Install the simulator, benchmark, reusable `sim_engine` library, public headers, and CMake package metadata with:
 
 ```bash
 cmake --install build --config Release --prefix install
 ```
 
-Downstream CMake projects can then use `find_package(AeroCPSSimulation CONFIG
-REQUIRED)` and link `AeroCPS::sim_engine` after adding the install prefix to
-`CMAKE_PREFIX_PATH`.
+Downstream CMake projects can then use `find_package(AeroCPSSimulation CONFIG REQUIRED)` and link `AeroCPS::sim_engine` after adding the install prefix to `CMAKE_PREFIX_PATH`.
 
 Run the simulator:
 
@@ -122,10 +112,7 @@ Run the representative fixed-wing trim scenario for 30 seconds:
 ./build/run_fixed_wing --duration 30 --time-step 0.01 --output fixed-wing.csv
 ```
 
-The fixed-wing runner deliberately enforces a maximum 300-second duration, a
-maximum 0.05-second time step, and a one-million-step ceiling. It exercises the
-validated trim trajectory without implying perturbation recovery beyond the
-current linear aerodynamic model's validated envelope.
+The fixed-wing runner deliberately enforces a maximum 300-second duration, a maximum 0.05-second time step, and a one-million-step ceiling. It exercises the validated trim trajectory without implying perturbation recovery beyond the current linear aerodynamic model's validated envelope.
 
 Use `--help` to display every supported option. Invalid, incomplete, non-finite, and out-of-range parameters are rejected before the simulation begins.
 
@@ -138,7 +125,7 @@ schema_version,step,time_s,altitude_m,velocity_mps,target_altitude_m,gravity_mps
 aerocps.telemetry.v1,1,0.050000,0.100000,2.000000,50.000000,-9.810000
 ```
 
-The field definitions, units, and compatibility policy are documented in [`docs/telemetry-contract.md`](docs/telemetry-contract.md) for integration with AeroCPSTelemetry and other consumers.
+The field definitions, units, and compatibility policy are documented in [`docs/telemetry-contract.md`](docs/telemetry-contract.md). The live AeroCPSTelemetry application imports this contract directly and rejects incompatible rows rather than silently remapping them.
 
 ## Verification
 
@@ -179,12 +166,12 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 Development will proceed in measured layers:
 
 1. pitch-damped coupled six-degree-of-freedom perturbation recovery
-2. direct ingestion integration with AeroCPSTelemetry
+2. extend browser ingestion only after a distinct fixed-wing telemetry contract is intentionally supported
 
 ## Related Software
 
-[AeroCPSTelemetry](https://github.com/JosiahChristian/AeroCPSTelemetry) provides the separate browser-based visualization surface for aerospace telemetry and flight-state behavior.
+[AeroCPSTelemetry](https://github.com/JosiahChristian/AeroCPSTelemetry) directly consumes the simulator's `aerocps.telemetry.v1` CSV for schema-validated browser playback.
 
 ## Status
 
-Active engineering project. Vertical-flight control, quaternion-based coupled rigid-body propagation, wind-relative air-data derivation, configurable six-axis aerodynamic loads, frame-aware load application, and a representative trimmed small fixed-wing command-line scenario are implemented and validated. Real-aircraft identification and validation remain outside the current scope.
+Active engineering project. Vertical-flight control, quaternion-based coupled rigid-body propagation, wind-relative air-data derivation, configurable six-axis aerodynamic loads, frame-aware load application, a representative trimmed small fixed-wing command-line scenario, and vertical-flight telemetry integration with AeroCPSTelemetry are implemented. Real-aircraft identification and validation remain outside the current scope.
