@@ -24,6 +24,7 @@ The operational command-line scenario remains the verified vertical-flight contr
 - Configurable exponential atmosphere density and steady world-frame wind
 - Quadratic drag with validated reference area and drag coefficient
 - Configurable linear lift, induced drag, and pitching-moment coefficient model
+- Explicit angle-of-attack validity envelope and bounded lift coefficient
 - Configurable sideslip, roll-rate, and yaw-rate lateral-directional derivatives
 - Combined six-axis aerodynamic load assembly and body-to-world force application
 - Wind-relative body-frame airspeed, angle-of-attack, and sideslip derivation
@@ -62,29 +63,12 @@ Requirements:
 
 - CMake 3.22 or newer
 - A C++17 compiler
-- Ninja when using the checked-in CMake presets
 
 ```bash
 cmake -S . -B build -DBUILD_TESTING=ON
 cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure
 ```
-
-For a reproducible Ninja build, use `cmake --preset default`,
-`cmake --build --preset default`, and `ctest --preset default`. A separate
-`sanitizers` preset enables AddressSanitizer and UndefinedBehaviorSanitizer on
-GCC and Clang; CI runs that preset on every push and pull request.
-
-Install the simulator, benchmark, reusable `sim_engine` library, public headers,
-and CMake package metadata with:
-
-```bash
-cmake --install build --config Release --prefix install
-```
-
-Downstream CMake projects can then use `find_package(AeroCPSSimulation CONFIG
-REQUIRED)` and link `AeroCPS::sim_engine` after adding the install prefix to
-`CMAKE_PREFIX_PATH`.
 
 Run the simulator:
 
@@ -113,7 +97,7 @@ The field definitions, units, and compatibility policy are documented in [`docs/
 
 ## Verification
 
-Every pull request and push to `main` builds and tests the same CMake targets on Ubuntu and Windows. A separate Linux lane runs the complete suite with address and undefined-behavior sanitizers. The regression executable verifies:
+Every pull request and push to `main` builds and tests the same CMake targets on Ubuntu and Windows. The regression executable verifies:
 
 - zero-state initialization
 - rejection of stepping before initialization
@@ -136,6 +120,7 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - exact telemetry schema version and required field contract
 - finite-state 250,000-step rigid-body performance smoke run
 - hand-calculated lift, induced-drag, and pitching-moment coefficient case
+- extreme positive and negative angle-of-attack saturation with finite loads
 - hand-calculated side-force, rolling-moment, and yawing-moment derivative case
 - exact six-axis load composition and a known 90-degree body-force frame transformation
 - wind-relative air-data derivation and body/world quaternion round-trip cases
@@ -145,7 +130,7 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 
 Development will proceed in measured layers:
 
-1. perturbation-recovery control for the fixed-wing reference
+1. bounded perturbation-recovery control for the fixed-wing reference
 2. command-line six-degree-of-freedom scenario selection and telemetry
 3. direct ingestion integration with AeroCPSTelemetry
 
