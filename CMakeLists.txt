@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(AeroCPSSimulation VERSION 1.11.0 LANGUAGES CXX)
+project(AeroCPSSimulation VERSION 1.12.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,6 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(sim_engine STATIC
     src/AerodynamicModel.cpp
+    src/FixedWingReference.cpp
     src/FlightModels.cpp
     src/NumericalIntegrator.cpp
     src/RigidBodyDynamics.cpp
@@ -53,6 +54,10 @@ if(BUILD_TESTING)
     add_executable(telemetry_contract_tests tests/test_telemetry_contract.cpp)
     target_link_libraries(telemetry_contract_tests PRIVATE sim_engine)
     add_test(NAME telemetry_contract_tests COMMAND telemetry_contract_tests)
+
+    add_executable(fixed_wing_reference_tests tests/test_fixed_wing_reference.cpp)
+    target_link_libraries(fixed_wing_reference_tests PRIVATE sim_engine)
+    add_test(NAME fixed_wing_reference_tests COMMAND fixed_wing_reference_tests)
 
     add_test(NAME performance_smoke COMMAND benchmark_simulation)
     set_tests_properties(performance_smoke PROPERTIES TIMEOUT 30)
