@@ -50,6 +50,8 @@ public:
         double zeroAnglePitchMoment;
         double pitchMomentSlopePerRadian;
         double referenceChordMeters;
+        double maximumLinearAngleOfAttackRadians;
+        double maximumLiftCoefficientMagnitude;
     };
 
     struct LateralDirectionalCoefficients {
