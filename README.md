@@ -26,6 +26,7 @@ The operational command-line scenario remains the verified vertical-flight contr
 - Configurable linear lift, induced drag, and pitching-moment coefficient model
 - Configurable sideslip, roll-rate, and yaw-rate lateral-directional derivatives
 - Combined six-axis aerodynamic load assembly and body-to-world force application
+- Wind-relative body-frame airspeed, angle-of-attack, and sideslip derivation
 - Ground-contact constraint
 - Structured CSV telemetry with scenario metadata on every row
 - Versioned `aerocps.telemetry.v1` contract for downstream consumers
@@ -50,7 +51,7 @@ Altitude and velocity telemetry
 
 The reusable engine coordinates separate vehicle-state, environment, controller, and integration responsibilities. The command-line application runs bounded scenarios, while independent regression executables validate controller behavior, scenario parsing, physical-model constraints, and numerical refinement.
 
-The independent rigid-body module provides a measured expansion path beyond vertical flight. It uses semi-implicit state updates, normalized quaternion attitude, world-frame forces, body-axis torques, diagonal inertia, and the rigid-body gyroscopic term. The aerodynamic module adds altitude-dependent density, wind-relative airspeed, quadratic drag, configurable longitudinal lift and pitch-moment coefficients, and lateral-directional stability derivatives with nondimensional body-rate scaling. Combined aerodynamic loads can be applied in body axes; force is rotated into the world frame through the current attitude while torque remains in body axes. No named vehicle coefficients are embedded.
+The independent rigid-body module provides a measured expansion path beyond vertical flight. It uses semi-implicit state updates, normalized quaternion attitude, world-frame forces, body-axis torques, diagonal inertia, and the rigid-body gyroscopic term. The aerodynamic module derives wind-relative body velocity, airspeed, angle of attack, and sideslip from world state; it then evaluates configurable longitudinal and lateral-directional coefficients. Combined aerodynamic loads can be applied in body axes; force is rotated into the world frame through the current attitude while torque remains in body axes. No named vehicle coefficients are embedded.
 
 ## Build and Run
 
@@ -117,13 +118,14 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - hand-calculated lift, induced-drag, and pitching-moment coefficient case
 - hand-calculated side-force, rolling-moment, and yawing-moment derivative case
 - exact six-axis load composition and a known 90-degree body-force frame transformation
+- wind-relative air-data derivation and body/world quaternion round-trip cases
 
 ## Engineering Roadmap
 
 Development will proceed in measured layers:
 
 1. vehicle-specific geometry and coefficient configuration
-2. aerodynamic-angle derivation from wind-relative body velocity
+2. bounded six-degree-of-freedom scenario execution
 3. direct ingestion integration with AeroCPSTelemetry
 
 ## Related Software
@@ -132,4 +134,4 @@ Development will proceed in measured layers:
 
 ## Status
 
-Active engineering project. Vertical-flight control, quaternion-based coupled rigid-body propagation, atmosphere density, wind-relative drag, configurable six-axis aerodynamic loads, and body-to-world load application are implemented and validated. Vehicle-specific coefficient data remain deliberately external.
+Active engineering project. Vertical-flight control, quaternion-based coupled rigid-body propagation, wind-relative air-data derivation, configurable six-axis aerodynamic loads, and frame-aware load application are implemented and validated. Vehicle-specific coefficient data remain deliberately external.

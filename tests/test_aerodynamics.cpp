@@ -104,5 +104,31 @@ int main() {
     assert(nearlyEqual(combinedLoads.momentBodyNewtonMeters.y, -9.8));
     assert(nearlyEqual(combinedLoads.momentBodyNewtonMeters.z, 30.38));
 
+    const auto airData = AerodynamicModel::airDataFromWorldState(
+        {15.0, 2.0, 1.0}, Quaternion{}, tailwind);
+    assert(nearlyEqual(airData.velocityBodyMetersPerSecond.x, 10.0));
+    assert(nearlyEqual(airData.velocityBodyMetersPerSecond.y, 2.0));
+    assert(nearlyEqual(airData.velocityBodyMetersPerSecond.z, 1.0));
+    assert(nearlyEqual(airData.airspeedMetersPerSecond, std::sqrt(105.0)));
+    assert(nearlyEqual(airData.angleOfAttackRadians, std::atan2(1.0, 10.0)));
+    assert(nearlyEqual(airData.sideslipAngleRadians, std::asin(2.0 / std::sqrt(105.0))));
+
+    const Quaternion quarterTurn = Quaternion::fromAxisAngle(
+        {0.0, 0.0, 1.0}, std::acos(-1.0) / 2.0);
+    const auto rotatedAirData = AerodynamicModel::airDataFromWorldState(
+        {0.0, 10.0, 0.0}, quarterTurn, stillAir);
+    assert(nearlyEqual(rotatedAirData.velocityBodyMetersPerSecond.x, 10.0));
+    assert(nearlyEqual(rotatedAirData.velocityBodyMetersPerSecond.y, 0.0));
+
+    const auto stateLoads = AerodynamicModel::loadsFromWorldState(
+        {20.0, 0.0, 0.0}, 0.0, Quaternion{}, {}, stillAir, body,
+        coefficients, lateralCoefficients);
+    const auto expectedStateLoads = AerodynamicModel::combinedLoads(
+        20.0, 0.0, 0.0, {}, seaLevelDensity, body,
+        coefficients, lateralCoefficients);
+    assert(nearlyEqual(stateLoads.forceBodyNewtons.x, expectedStateLoads.forceBodyNewtons.x));
+    assert(nearlyEqual(stateLoads.forceBodyNewtons.y, expectedStateLoads.forceBodyNewtons.y));
+    assert(nearlyEqual(stateLoads.forceBodyNewtons.z, expectedStateLoads.forceBodyNewtons.z));
+
     return 0;
 }

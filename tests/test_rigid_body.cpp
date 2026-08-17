@@ -39,6 +39,10 @@ int main() {
     assert(nearlyEqual(rotated.x, 0.0));
     assert(nearlyEqual(rotated.y, 1.0));
     assert(nearlyEqual(rotated.z, 0.0));
+    const Vector3 restored = rotateWorldToBody(quarterTurn, rotated);
+    assert(nearlyEqual(restored.x, 1.0));
+    assert(nearlyEqual(restored.y, 0.0));
+    assert(nearlyEqual(restored.z, 0.0));
 
     RigidBodyState bodyLoadState;
     bodyLoadState.attitudeBodyToWorld = quarterTurn;
