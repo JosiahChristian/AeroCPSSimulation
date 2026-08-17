@@ -62,3 +62,38 @@ Vector3 AerodynamicModel::dragForceWorld(
         dynamicPressure * properties.dragCoefficient() * properties.referenceArea();
     return relativeVelocity * (-dragMagnitude / speed);
 }
+
+AerodynamicModel::LongitudinalLoads AerodynamicModel::longitudinalLoads(
+    double airspeedMetersPerSecond,
+    double angleOfAttackRadians,
+    double densityKilogramsPerCubicMeter,
+    const AerodynamicProperties& properties,
+    const LongitudinalCoefficients& coefficients) {
+    if (!std::isfinite(airspeedMetersPerSecond) || airspeedMetersPerSecond < 0.0 ||
+        !std::isfinite(angleOfAttackRadians) ||
+        !std::isfinite(densityKilogramsPerCubicMeter) || densityKilogramsPerCubicMeter <= 0.0 ||
+        !std::isfinite(coefficients.zeroAngleLift) ||
+        !std::isfinite(coefficients.liftSlopePerRadian) ||
+        !std::isfinite(coefficients.zeroLiftDrag) || coefficients.zeroLiftDrag < 0.0 ||
+        !std::isfinite(coefficients.inducedDragFactor) || coefficients.inducedDragFactor < 0.0 ||
+        !std::isfinite(coefficients.zeroAnglePitchMoment) ||
+        !std::isfinite(coefficients.pitchMomentSlopePerRadian) ||
+        !std::isfinite(coefficients.referenceChordMeters) || coefficients.referenceChordMeters <= 0.0) {
+        throw std::invalid_argument("longitudinal aerodynamic inputs must be finite and physically valid");
+    }
+
+    const double dynamicPressure = 0.5 * densityKilogramsPerCubicMeter *
+                                   airspeedMetersPerSecond * airspeedMetersPerSecond;
+    const double liftCoefficient = coefficients.zeroAngleLift +
+                                   coefficients.liftSlopePerRadian * angleOfAttackRadians;
+    const double dragCoefficient = coefficients.zeroLiftDrag +
+                                   coefficients.inducedDragFactor * liftCoefficient * liftCoefficient;
+    const double pitchMomentCoefficient = coefficients.zeroAnglePitchMoment +
+                                          coefficients.pitchMomentSlopePerRadian * angleOfAttackRadians;
+    const double area = properties.referenceArea();
+
+    return {
+        {-dynamicPressure * area * dragCoefficient, 0.0, dynamicPressure * area * liftCoefficient},
+        {0.0, dynamicPressure * area * coefficients.referenceChordMeters * pitchMomentCoefficient, 0.0}
+    };
+}
