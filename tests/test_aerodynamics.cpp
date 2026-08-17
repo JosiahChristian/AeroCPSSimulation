@@ -94,5 +94,15 @@ int main() {
     }
     assert(rejectedSpan);
 
+    const auto combinedLoads = AerodynamicModel::combinedLoads(
+        20.0, 0.1, 0.1, {0.4, 9.0, -0.2}, seaLevelDensity, body,
+        coefficients, lateralCoefficients);
+    assert(nearlyEqual(combinedLoads.forceBodyNewtons.x, -23.52));
+    assert(nearlyEqual(combinedLoads.forceBodyNewtons.y, -39.2));
+    assert(nearlyEqual(combinedLoads.forceBodyNewtons.z, 294.0));
+    assert(nearlyEqual(combinedLoads.momentBodyNewtonMeters.x, -30.38));
+    assert(nearlyEqual(combinedLoads.momentBodyNewtonMeters.y, -9.8));
+    assert(nearlyEqual(combinedLoads.momentBodyNewtonMeters.z, 30.38));
+
     return 0;
 }
