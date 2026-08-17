@@ -59,6 +59,20 @@ The independent rigid-body module provides a measured expansion path beyond vert
 
 The included `FixedWingReference` is a representative engineering fixture, not a certified or identified aircraft model. Its mass, diagonal inertia, geometry, coefficients, and thrust are internally constructed around an exact 20 m/s straight-and-level trim condition at 100 m altitude. This gives the six-degree-of-freedom path a reproducible integration scenario without overstating real-aircraft fidelity.
 
+### Modeling Boundaries
+
+The pitch controller is currently validated as an isolated, saturation-bounded
+moment controller. It is not yet connected to the coupled fixed-wing runner and
+does not claim closed-loop flight recovery. Coupled recovery requires validated
+pitch-rate damping, longitudinal control authority, and an explicit operating
+envelope; those are tracked as engineering work rather than inferred from the
+isolated controller test.
+
+The fixed-wing coefficients remain representative fixtures rather than
+identified aircraft data. The runner therefore demonstrates deterministic
+software integration and trim propagation, not certification-grade flight
+prediction.
+
 ## Build and Run
 
 Requirements:
