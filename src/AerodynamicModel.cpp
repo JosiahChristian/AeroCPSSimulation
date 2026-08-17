@@ -186,3 +186,53 @@ AerodynamicModel::Loads AerodynamicModel::combinedLoads(
     combined.momentBodyNewtonMeters += lateralDirectional.momentBodyNewtonMeters;
     return combined;
 }
+
+AerodynamicModel::AirData AerodynamicModel::airDataFromWorldState(
+    Vector3 vehicleVelocityWorldMetersPerSecond,
+    const Quaternion& attitudeBodyToWorld,
+    const AtmosphereModel& atmosphere) {
+    if (!vehicleVelocityWorldMetersPerSecond.isFinite() || !attitudeBodyToWorld.isFinite()) {
+        throw std::invalid_argument("world velocity and attitude must be finite");
+    }
+
+    const Vector3 relativeVelocityWorld =
+        vehicleVelocityWorldMetersPerSecond - atmosphere.windWorldMetersPerSecond();
+    const Vector3 relativeVelocityBody =
+        rotateWorldToBody(attitudeBodyToWorld, relativeVelocityWorld);
+    const double airspeed = std::sqrt(
+        relativeVelocityBody.x * relativeVelocityBody.x +
+        relativeVelocityBody.y * relativeVelocityBody.y +
+        relativeVelocityBody.z * relativeVelocityBody.z);
+    if (airspeed == 0.0) {
+        return {relativeVelocityBody, 0.0, 0.0, 0.0};
+    }
+
+    return {
+        relativeVelocityBody,
+        airspeed,
+        std::atan2(relativeVelocityBody.z, relativeVelocityBody.x),
+        std::asin(relativeVelocityBody.y / airspeed)
+    };
+}
+
+AerodynamicModel::Loads AerodynamicModel::loadsFromWorldState(
+    Vector3 vehicleVelocityWorldMetersPerSecond,
+    double altitudeMeters,
+    const Quaternion& attitudeBodyToWorld,
+    Vector3 angularVelocityBodyRadiansPerSecond,
+    const AtmosphereModel& atmosphere,
+    const AerodynamicProperties& properties,
+    const LongitudinalCoefficients& longitudinalCoefficients,
+    const LateralDirectionalCoefficients& lateralDirectionalCoefficients) {
+    const AirData airData = airDataFromWorldState(
+        vehicleVelocityWorldMetersPerSecond, attitudeBodyToWorld, atmosphere);
+    return combinedLoads(
+        airData.airspeedMetersPerSecond,
+        airData.angleOfAttackRadians,
+        airData.sideslipAngleRadians,
+        angularVelocityBodyRadiansPerSecond,
+        atmosphere.densityAtAltitude(altitudeMeters),
+        properties,
+        longitudinalCoefficients,
+        lateralDirectionalCoefficients);
+}
