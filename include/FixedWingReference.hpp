@@ -2,6 +2,7 @@
 
 #include "AerodynamicModel.hpp"
 #include "RigidBodyDynamics.hpp"
+#include "PitchController.hpp"
 
 class FixedWingReference {
 public:
@@ -17,6 +18,7 @@ public:
     [[nodiscard]] static AtmosphereModel atmosphere();
     [[nodiscard]] static RigidBodyState trimState();
     [[nodiscard]] static double trimThrustNewtons();
+    [[nodiscard]] static PitchController pitchController();
 
     static void advanceTrimStep(RigidBodyState& state, double timeStep);
 };
