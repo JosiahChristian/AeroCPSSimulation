@@ -152,3 +152,37 @@ AerodynamicModel::Loads AerodynamicModel::lateralDirectionalLoads(
         {momentScale * rollMomentCoefficient, 0.0, momentScale * yawMomentCoefficient}
     };
 }
+
+AerodynamicModel::Loads AerodynamicModel::combinedLoads(
+    double airspeedMetersPerSecond,
+    double angleOfAttackRadians,
+    double sideslipAngleRadians,
+    Vector3 angularVelocityBodyRadiansPerSecond,
+    double densityKilogramsPerCubicMeter,
+    const AerodynamicProperties& properties,
+    const LongitudinalCoefficients& longitudinalCoefficients,
+    const LateralDirectionalCoefficients& lateralDirectionalCoefficients) {
+    if (!angularVelocityBodyRadiansPerSecond.isFinite()) {
+        throw std::invalid_argument("body angular velocity must be finite");
+    }
+
+    const Loads longitudinal = longitudinalLoads(
+        airspeedMetersPerSecond,
+        angleOfAttackRadians,
+        densityKilogramsPerCubicMeter,
+        properties,
+        longitudinalCoefficients);
+    const Loads lateralDirectional = lateralDirectionalLoads(
+        airspeedMetersPerSecond,
+        sideslipAngleRadians,
+        angularVelocityBodyRadiansPerSecond.x,
+        angularVelocityBodyRadiansPerSecond.z,
+        densityKilogramsPerCubicMeter,
+        properties,
+        lateralDirectionalCoefficients);
+
+    Loads combined = longitudinal;
+    combined.forceBodyNewtons += lateralDirectional.forceBodyNewtons;
+    combined.momentBodyNewtonMeters += lateralDirectional.momentBodyNewtonMeters;
+    return combined;
+}
