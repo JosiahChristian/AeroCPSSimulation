@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.22)
 
 project(AeroCPSSimulation VERSION 1.12.0 LANGUAGES CXX)
 
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -25,7 +28,11 @@ add_library(sim_engine STATIC
     src/SimulationScenario.cpp
     src/SimulatorEngine.cpp
 )
-target_include_directories(sim_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(sim_engine PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+target_compile_features(sim_engine PUBLIC cxx_std_17)
 
 if(MSVC)
     target_compile_options(sim_engine PRIVATE /W4 /permissive-)
@@ -72,3 +79,32 @@ if(BUILD_TESTING)
     add_test(NAME performance_smoke COMMAND benchmark_simulation)
     set_tests_properties(performance_smoke PROPERTIES TIMEOUT 30)
 endif()
+
+install(TARGETS sim_engine run_simulation benchmark_simulation
+    EXPORT AeroCPSSimulationTargets
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+configure_package_config_file(
+    cmake/AeroCPSSimulationConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/AeroCPSSimulationConfig.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/AeroCPSSimulation
+)
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/AeroCPSSimulationConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/AeroCPSSimulationConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/AeroCPSSimulationConfigVersion.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/AeroCPSSimulation
+)
+install(EXPORT AeroCPSSimulationTargets
+    FILE AeroCPSSimulationTargets.cmake
+    NAMESPACE AeroCPS::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/AeroCPSSimulation
+)

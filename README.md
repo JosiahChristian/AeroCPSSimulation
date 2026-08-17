@@ -75,6 +75,17 @@ For a reproducible Ninja build, use `cmake --preset default`,
 `sanitizers` preset enables AddressSanitizer and UndefinedBehaviorSanitizer on
 GCC and Clang; CI runs that preset on every push and pull request.
 
+Install the simulator, benchmark, reusable `sim_engine` library, public headers,
+and CMake package metadata with:
+
+```bash
+cmake --install build --config Release --prefix install
+```
+
+Downstream CMake projects can then use `find_package(AeroCPSSimulation CONFIG
+REQUIRED)` and link `AeroCPS::sim_engine` after adding the install prefix to
+`CMAKE_PREFIX_PATH`.
+
 Run the simulator:
 
 ```bash
