@@ -49,6 +49,7 @@ public:
         double inducedDragFactor;
         double zeroAnglePitchMoment;
         double pitchMomentSlopePerRadian;
+        double pitchMomentPitchRate;
         double referenceChordMeters;
         double maximumLinearAngleOfAttackRadians;
         double maximumLiftCoefficientMagnitude;
@@ -76,6 +77,7 @@ public:
     [[nodiscard]] static Loads longitudinalLoads(
         double airspeedMetersPerSecond,
         double angleOfAttackRadians,
+        double pitchRateRadiansPerSecond,
         double densityKilogramsPerCubicMeter,
         const AerodynamicProperties& properties,
         const LongitudinalCoefficients& coefficients);
