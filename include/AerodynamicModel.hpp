@@ -78,4 +78,14 @@ public:
         double densityKilogramsPerCubicMeter,
         const AerodynamicProperties& properties,
         const LateralDirectionalCoefficients& coefficients);
+
+    [[nodiscard]] static Loads combinedLoads(
+        double airspeedMetersPerSecond,
+        double angleOfAttackRadians,
+        double sideslipAngleRadians,
+        Vector3 angularVelocityBodyRadiansPerSecond,
+        double densityKilogramsPerCubicMeter,
+        const AerodynamicProperties& properties,
+        const LongitudinalCoefficients& longitudinalCoefficients,
+        const LateralDirectionalCoefficients& lateralDirectionalCoefficients);
 };

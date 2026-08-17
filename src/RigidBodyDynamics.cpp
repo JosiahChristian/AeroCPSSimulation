@@ -65,3 +65,18 @@ void RigidBodyDynamics::advance(
     state.attitudeBodyToWorld.z += 0.5 * derivative.z * timeStep;
     state.attitudeBodyToWorld.normalize();
 }
+
+void RigidBodyDynamics::advanceBodyLoads(
+    RigidBodyState& state,
+    const RigidBodyProperties& properties,
+    Vector3 netForceBodyNewtons,
+    Vector3 netTorqueBodyNewtonMeters,
+    double timeStep) {
+    if (!state.attitudeBodyToWorld.isFinite() || !netForceBodyNewtons.isFinite()) {
+        throw std::invalid_argument("attitude and body force must be finite");
+    }
+
+    const Vector3 netForceWorldNewtons =
+        rotateBodyToWorld(state.attitudeBodyToWorld, netForceBodyNewtons);
+    advance(state, properties, netForceWorldNewtons, netTorqueBodyNewtonMeters, timeStep);
+}
