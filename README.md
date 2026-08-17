@@ -23,6 +23,7 @@ The operational command-line scenario remains the verified vertical-flight contr
 - Coupled diagonal-inertia rotational dynamics
 - Configurable exponential atmosphere density and steady world-frame wind
 - Quadratic drag with validated reference area and drag coefficient
+- Configurable linear lift, induced drag, and pitching-moment coefficient model
 - Ground-contact constraint
 - Structured CSV telemetry with scenario metadata on every row
 - Versioned `aerocps.telemetry.v1` contract for downstream consumers
@@ -47,7 +48,7 @@ Altitude and velocity telemetry
 
 The reusable engine coordinates separate vehicle-state, environment, controller, and integration responsibilities. The command-line application runs bounded scenarios, while independent regression executables validate controller behavior, scenario parsing, physical-model constraints, and numerical refinement.
 
-The independent rigid-body module provides a measured expansion path beyond vertical flight. It uses semi-implicit state updates, normalized quaternion attitude, world-frame forces, body-axis torques, diagonal inertia, and the rigid-body gyroscopic term. The aerodynamic module adds altitude-dependent density, wind-relative airspeed, and quadratic drag. Lift, stability derivatives, and vehicle-specific moment coefficients remain future work.
+The independent rigid-body module provides a measured expansion path beyond vertical flight. It uses semi-implicit state updates, normalized quaternion attitude, world-frame forces, body-axis torques, diagonal inertia, and the rigid-body gyroscopic term. The aerodynamic module adds altitude-dependent density, wind-relative airspeed, quadratic drag, and configurable longitudinal lift and pitch-moment coefficients. No named vehicle coefficients are embedded.
 
 ## Build and Run
 
@@ -111,13 +112,14 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - wind-relative drag reduction and zero-relative-airspeed behavior
 - exact telemetry schema version and required field contract
 - finite-state 250,000-step rigid-body performance smoke run
+- hand-calculated lift, induced-drag, and pitching-moment coefficient case
 
 ## Engineering Roadmap
 
 Development will proceed in measured layers:
 
-1. lift and aerodynamic moment coefficients with angle-of-attack validation
-2. vehicle-specific geometry and atmosphere scenario configuration
+1. vehicle-specific geometry and coefficient configuration
+2. lateral-directional aerodynamic derivatives
 3. direct ingestion integration with AeroCPSTelemetry
 
 ## Related Software
@@ -126,4 +128,4 @@ Development will proceed in measured layers:
 
 ## Status
 
-Active engineering project. Vertical-flight control, quaternion-based coupled rigid-body propagation, atmosphere density, wind-relative airspeed, and quadratic drag are implemented and validated. Vehicle-specific lift and moment models remain planned work.
+Active engineering project. Vertical-flight control, quaternion-based coupled rigid-body propagation, atmosphere density, wind-relative drag, and configurable longitudinal lift and pitch moments are implemented and validated. Vehicle-specific coefficient data remain deliberately external.
