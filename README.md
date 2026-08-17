@@ -29,6 +29,7 @@ The operational command-line scenario remains the verified vertical-flight contr
 - Combined six-axis aerodynamic load assembly and body-to-world force application
 - Wind-relative body-frame airspeed, angle-of-attack, and sideslip derivation
 - Representative 8 kg small fixed-wing reference configuration with verified level-flight trim
+- Saturation-bounded pitch-axis PD controller with isolated inertia-response validation
 - Bounded fixed-wing command-line execution with versioned 6-DOF CSV telemetry
 - Ground-contact constraint
 - Structured CSV telemetry with scenario metadata on every row
@@ -154,13 +155,14 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - exact six-axis load composition and a known 90-degree body-force frame transformation
 - wind-relative air-data derivation and body/world quaternion round-trip cases
 - 10-second fixed-wing trim propagation with bounded position, velocity, attitude, and angular-rate residuals
+- isolated pitch-axis recovery from a 0.05 rad error with bounded moment and residuals below 0.001
 - fixed-wing scenario parsing, execution bounds, and exact 6-DOF telemetry schema
 
 ## Engineering Roadmap
 
 Development will proceed in measured layers:
 
-1. bounded perturbation-recovery control for the fixed-wing reference
+1. coupled six-degree-of-freedom perturbation-recovery control
 2. direct ingestion integration with AeroCPSTelemetry
 
 ## Related Software
