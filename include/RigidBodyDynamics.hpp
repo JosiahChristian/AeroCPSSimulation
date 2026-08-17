@@ -30,4 +30,11 @@ public:
         Vector3 netForceWorldNewtons,
         Vector3 netTorqueBodyNewtonMeters,
         double timeStep);
+
+    static void advanceBodyLoads(
+        RigidBodyState& state,
+        const RigidBodyProperties& properties,
+        Vector3 netForceBodyNewtons,
+        Vector3 netTorqueBodyNewtonMeters,
+        double timeStep);
 };
