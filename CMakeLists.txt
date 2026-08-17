@@ -6,6 +6,16 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(AEROCPS_ENABLE_SANITIZERS "Enable address and undefined-behavior sanitizers" OFF)
+
+if(AEROCPS_ENABLE_SANITIZERS)
+    if(MSVC)
+        message(FATAL_ERROR "AEROCPS_ENABLE_SANITIZERS is supported with GCC and Clang")
+    endif()
+    add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
+endif()
+
 add_library(sim_engine STATIC
     src/AerodynamicModel.cpp
     src/FixedWingReference.cpp

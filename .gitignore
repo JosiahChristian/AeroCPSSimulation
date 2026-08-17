@@ -17,6 +17,10 @@ Makefile
 *.so
 *.dll
 *.dylib
+compile_commands.json
+
+# Local CMake presets
+CMakeUserPresets.json
 
 # Generated telemetry and logs
 test_logs/

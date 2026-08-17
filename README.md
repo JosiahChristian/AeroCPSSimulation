@@ -62,12 +62,18 @@ Requirements:
 
 - CMake 3.22 or newer
 - A C++17 compiler
+- Ninja when using the checked-in CMake presets
 
 ```bash
 cmake -S . -B build -DBUILD_TESTING=ON
 cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure
 ```
+
+For a reproducible Ninja build, use `cmake --preset default`,
+`cmake --build --preset default`, and `ctest --preset default`. A separate
+`sanitizers` preset enables AddressSanitizer and UndefinedBehaviorSanitizer on
+GCC and Clang; CI runs that preset on every push and pull request.
 
 Run the simulator:
 
@@ -96,7 +102,7 @@ The field definitions, units, and compatibility policy are documented in [`docs/
 
 ## Verification
 
-Every pull request and push to `main` builds and tests the same CMake targets on Ubuntu and Windows. The regression executable verifies:
+Every pull request and push to `main` builds and tests the same CMake targets on Ubuntu and Windows. A separate Linux lane runs the complete suite with address and undefined-behavior sanitizers. The regression executable verifies:
 
 - zero-state initialization
 - rejection of stepping before initialization

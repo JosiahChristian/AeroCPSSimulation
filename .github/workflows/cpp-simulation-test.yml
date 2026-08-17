@@ -24,3 +24,15 @@ jobs:
         run: cmake --build build --config Release
       - name: Test
         run: ctest --test-dir build -C Release --output-on-failure
+
+  sanitizer-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake --preset sanitizers
+      - name: Build
+        run: cmake --build --preset sanitizers
+      - name: Test
+        run: ctest --preset sanitizers
