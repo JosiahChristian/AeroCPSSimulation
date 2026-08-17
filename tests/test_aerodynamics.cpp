@@ -50,5 +50,20 @@ int main() {
     }
     assert(rejectedArea);
 
+    const AerodynamicModel::LongitudinalCoefficients coefficients{
+        0.2, 4.0, 0.03, 0.05, 0.01, -0.5, 0.5
+    };
+    const auto loads = AerodynamicModel::longitudinalLoads(
+        20.0, 0.1, seaLevelDensity, body, coefficients);
+    assert(nearlyEqual(loads.forceBodyNewtons.x, -23.52));
+    assert(nearlyEqual(loads.forceBodyNewtons.z, 294.0));
+    assert(nearlyEqual(loads.momentBodyNewtonMeters.y, -9.8));
+
+    const auto zeroSpeedLoads = AerodynamicModel::longitudinalLoads(
+        0.0, 0.1, seaLevelDensity, body, coefficients);
+    assert(nearlyEqual(zeroSpeedLoads.forceBodyNewtons.x, 0.0));
+    assert(nearlyEqual(zeroSpeedLoads.forceBodyNewtons.z, 0.0));
+    assert(nearlyEqual(zeroSpeedLoads.momentBodyNewtonMeters.y, 0.0));
+
     return 0;
 }
