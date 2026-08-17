@@ -62,3 +62,11 @@ struct Quaternion {
     const Quaternion rotated = normalized * Quaternion{0.0, bodyVector.x, bodyVector.y, bodyVector.z} * normalized.conjugate();
     return {rotated.x, rotated.y, rotated.z};
 }
+
+[[nodiscard]] inline Vector3 rotateWorldToBody(const Quaternion& attitude, Vector3 worldVector) {
+    Quaternion normalized = attitude;
+    normalized.normalize();
+    const Quaternion rotated = normalized.conjugate() *
+        Quaternion{0.0, worldVector.x, worldVector.y, worldVector.z} * normalized;
+    return {rotated.x, rotated.y, rotated.z};
+}
