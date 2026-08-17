@@ -67,11 +67,13 @@ Vector3 AerodynamicModel::dragForceWorld(
 AerodynamicModel::Loads AerodynamicModel::longitudinalLoads(
     double airspeedMetersPerSecond,
     double angleOfAttackRadians,
+    double pitchRateRadiansPerSecond,
     double densityKilogramsPerCubicMeter,
     const AerodynamicProperties& properties,
     const LongitudinalCoefficients& coefficients) {
     if (!std::isfinite(airspeedMetersPerSecond) || airspeedMetersPerSecond < 0.0 ||
         !std::isfinite(angleOfAttackRadians) ||
+        !std::isfinite(pitchRateRadiansPerSecond) ||
         !std::isfinite(densityKilogramsPerCubicMeter) || densityKilogramsPerCubicMeter <= 0.0 ||
         !std::isfinite(coefficients.zeroAngleLift) ||
         !std::isfinite(coefficients.liftSlopePerRadian) ||
@@ -79,6 +81,7 @@ AerodynamicModel::Loads AerodynamicModel::longitudinalLoads(
         !std::isfinite(coefficients.inducedDragFactor) || coefficients.inducedDragFactor < 0.0 ||
         !std::isfinite(coefficients.zeroAnglePitchMoment) ||
         !std::isfinite(coefficients.pitchMomentSlopePerRadian) ||
+        !std::isfinite(coefficients.pitchMomentPitchRate) ||
         !std::isfinite(coefficients.referenceChordMeters) || coefficients.referenceChordMeters <= 0.0 ||
         !std::isfinite(coefficients.maximumLinearAngleOfAttackRadians) ||
             coefficients.maximumLinearAngleOfAttackRadians <= 0.0 ||
@@ -99,8 +102,13 @@ AerodynamicModel::Loads AerodynamicModel::longitudinalLoads(
         coefficients.maximumLiftCoefficientMagnitude);
     const double dragCoefficient = coefficients.zeroLiftDrag +
                                    coefficients.inducedDragFactor * liftCoefficient * liftCoefficient;
+    const double normalizedPitchRate = airspeedMetersPerSecond > 0.0
+        ? pitchRateRadiansPerSecond * coefficients.referenceChordMeters /
+              (2.0 * airspeedMetersPerSecond)
+        : 0.0;
     const double pitchMomentCoefficient = coefficients.zeroAnglePitchMoment +
-        coefficients.pitchMomentSlopePerRadian * effectiveAngleOfAttack;
+        coefficients.pitchMomentSlopePerRadian * effectiveAngleOfAttack +
+        coefficients.pitchMomentPitchRate * normalizedPitchRate;
     const double area = properties.referenceArea();
 
     return {
@@ -180,6 +188,7 @@ AerodynamicModel::Loads AerodynamicModel::combinedLoads(
     const Loads longitudinal = longitudinalLoads(
         airspeedMetersPerSecond,
         angleOfAttackRadians,
+        angularVelocityBodyRadiansPerSecond.y,
         densityKilogramsPerCubicMeter,
         properties,
         longitudinalCoefficients);

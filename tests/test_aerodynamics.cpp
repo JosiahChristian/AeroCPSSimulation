@@ -51,24 +51,24 @@ int main() {
     assert(rejectedArea);
 
     const AerodynamicModel::LongitudinalCoefficients coefficients{
-        0.2, 4.0, 0.03, 0.05, 0.01, -0.5, 0.5, 0.35, 1.4
+        0.2, 4.0, 0.03, 0.05, 0.01, -0.5, -8.0, 0.5, 0.35, 1.4
     };
     const auto loads = AerodynamicModel::longitudinalLoads(
-        20.0, 0.1, seaLevelDensity, body, coefficients);
+        20.0, 0.1, 0.0, seaLevelDensity, body, coefficients);
     assert(nearlyEqual(loads.forceBodyNewtons.x, -23.52));
     assert(nearlyEqual(loads.forceBodyNewtons.z, 294.0));
     assert(nearlyEqual(loads.momentBodyNewtonMeters.y, -9.8));
 
     const auto zeroSpeedLoads = AerodynamicModel::longitudinalLoads(
-        0.0, 0.1, seaLevelDensity, body, coefficients);
+        0.0, 0.1, 0.4, seaLevelDensity, body, coefficients);
     assert(nearlyEqual(zeroSpeedLoads.forceBodyNewtons.x, 0.0));
     assert(nearlyEqual(zeroSpeedLoads.forceBodyNewtons.z, 0.0));
     assert(nearlyEqual(zeroSpeedLoads.momentBodyNewtonMeters.y, 0.0));
 
     const auto highAngleLoads = AerodynamicModel::longitudinalLoads(
-        20.0, 10.0, seaLevelDensity, body, coefficients);
+        20.0, 10.0, 0.0, seaLevelDensity, body, coefficients);
     const auto negativeHighAngleLoads = AerodynamicModel::longitudinalLoads(
-        20.0, -10.0, seaLevelDensity, body, coefficients);
+        20.0, -10.0, 0.0, seaLevelDensity, body, coefficients);
     assert(nearlyEqual(highAngleLoads.forceBodyNewtons.z, 686.0));
     assert(nearlyEqual(negativeHighAngleLoads.forceBodyNewtons.z, -588.0));
     assert(std::isfinite(highAngleLoads.forceBodyNewtons.x));
@@ -79,11 +79,15 @@ int main() {
         auto invalidCoefficients = coefficients;
         invalidCoefficients.maximumLinearAngleOfAttackRadians = 0.0;
         static_cast<void>(AerodynamicModel::longitudinalLoads(
-            20.0, 0.1, seaLevelDensity, body, invalidCoefficients));
+            20.0, 0.1, 0.0, seaLevelDensity, body, invalidCoefficients));
     } catch (const std::invalid_argument&) {
         rejectedEnvelope = true;
     }
     assert(rejectedEnvelope);
+
+    const auto pitchRateLoads = AerodynamicModel::longitudinalLoads(
+        20.0, 0.1, 0.4, seaLevelDensity, body, coefficients);
+    assert(nearlyEqual(pitchRateLoads.momentBodyNewtonMeters.y, -19.6));
 
     const AerodynamicModel::LateralDirectionalCoefficients lateralCoefficients{
         -0.8, 0.1, 0.2,
@@ -115,7 +119,7 @@ int main() {
     assert(rejectedSpan);
 
     const auto combinedLoads = AerodynamicModel::combinedLoads(
-        20.0, 0.1, 0.1, {0.4, 9.0, -0.2}, seaLevelDensity, body,
+        20.0, 0.1, 0.1, {0.4, 0.0, -0.2}, seaLevelDensity, body,
         coefficients, lateralCoefficients);
     assert(nearlyEqual(combinedLoads.forceBodyNewtons.x, -23.52));
     assert(nearlyEqual(combinedLoads.forceBodyNewtons.y, -39.2));
