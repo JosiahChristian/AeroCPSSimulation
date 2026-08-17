@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Quaternion.hpp"
 #include "Vector3.hpp"
 
 class AtmosphereModel {
@@ -32,6 +33,13 @@ public:
     struct Loads {
         Vector3 forceBodyNewtons;
         Vector3 momentBodyNewtonMeters;
+    };
+
+    struct AirData {
+        Vector3 velocityBodyMetersPerSecond;
+        double airspeedMetersPerSecond;
+        double angleOfAttackRadians;
+        double sideslipAngleRadians;
     };
 
     struct LongitudinalCoefficients {
@@ -85,6 +93,21 @@ public:
         double sideslipAngleRadians,
         Vector3 angularVelocityBodyRadiansPerSecond,
         double densityKilogramsPerCubicMeter,
+        const AerodynamicProperties& properties,
+        const LongitudinalCoefficients& longitudinalCoefficients,
+        const LateralDirectionalCoefficients& lateralDirectionalCoefficients);
+
+    [[nodiscard]] static AirData airDataFromWorldState(
+        Vector3 vehicleVelocityWorldMetersPerSecond,
+        const Quaternion& attitudeBodyToWorld,
+        const AtmosphereModel& atmosphere);
+
+    [[nodiscard]] static Loads loadsFromWorldState(
+        Vector3 vehicleVelocityWorldMetersPerSecond,
+        double altitudeMeters,
+        const Quaternion& attitudeBodyToWorld,
+        Vector3 angularVelocityBodyRadiansPerSecond,
+        const AtmosphereModel& atmosphere,
         const AerodynamicProperties& properties,
         const LongitudinalCoefficients& longitudinalCoefficients,
         const LateralDirectionalCoefficients& lateralDirectionalCoefficients);
