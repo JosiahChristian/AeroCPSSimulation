@@ -65,5 +65,34 @@ int main() {
     assert(nearlyEqual(zeroSpeedLoads.forceBodyNewtons.z, 0.0));
     assert(nearlyEqual(zeroSpeedLoads.momentBodyNewtonMeters.y, 0.0));
 
+    const AerodynamicModel::LateralDirectionalCoefficients lateralCoefficients{
+        -0.8, 0.1, 0.2,
+        -0.2, -0.5, 0.1,
+        0.3, -0.05, -0.2,
+        2.0
+    };
+    const auto lateralLoads = AerodynamicModel::lateralDirectionalLoads(
+        20.0, 0.1, 0.4, -0.2, seaLevelDensity, body, lateralCoefficients);
+    assert(nearlyEqual(lateralLoads.forceBodyNewtons.y, -39.2));
+    assert(nearlyEqual(lateralLoads.momentBodyNewtonMeters.x, -30.38));
+    assert(nearlyEqual(lateralLoads.momentBodyNewtonMeters.z, 30.38));
+
+    const auto zeroSpeedLateralLoads = AerodynamicModel::lateralDirectionalLoads(
+        0.0, 0.1, 0.4, -0.2, seaLevelDensity, body, lateralCoefficients);
+    assert(nearlyEqual(zeroSpeedLateralLoads.forceBodyNewtons.y, 0.0));
+    assert(nearlyEqual(zeroSpeedLateralLoads.momentBodyNewtonMeters.x, 0.0));
+    assert(nearlyEqual(zeroSpeedLateralLoads.momentBodyNewtonMeters.z, 0.0));
+
+    bool rejectedSpan = false;
+    try {
+        auto invalidCoefficients = lateralCoefficients;
+        invalidCoefficients.referenceSpanMeters = 0.0;
+        static_cast<void>(AerodynamicModel::lateralDirectionalLoads(
+            20.0, 0.1, 0.4, -0.2, seaLevelDensity, body, invalidCoefficients));
+    } catch (const std::invalid_argument&) {
+        rejectedSpan = true;
+    }
+    assert(rejectedSpan);
+
     return 0;
 }

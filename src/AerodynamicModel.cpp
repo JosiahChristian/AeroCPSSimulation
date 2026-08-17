@@ -63,7 +63,7 @@ Vector3 AerodynamicModel::dragForceWorld(
     return relativeVelocity * (-dragMagnitude / speed);
 }
 
-AerodynamicModel::LongitudinalLoads AerodynamicModel::longitudinalLoads(
+AerodynamicModel::Loads AerodynamicModel::longitudinalLoads(
     double airspeedMetersPerSecond,
     double angleOfAttackRadians,
     double densityKilogramsPerCubicMeter,
@@ -95,5 +95,60 @@ AerodynamicModel::LongitudinalLoads AerodynamicModel::longitudinalLoads(
     return {
         {-dynamicPressure * area * dragCoefficient, 0.0, dynamicPressure * area * liftCoefficient},
         {0.0, dynamicPressure * area * coefficients.referenceChordMeters * pitchMomentCoefficient, 0.0}
+    };
+}
+
+AerodynamicModel::Loads AerodynamicModel::lateralDirectionalLoads(
+    double airspeedMetersPerSecond,
+    double sideslipAngleRadians,
+    double rollRateRadiansPerSecond,
+    double yawRateRadiansPerSecond,
+    double densityKilogramsPerCubicMeter,
+    const AerodynamicProperties& properties,
+    const LateralDirectionalCoefficients& coefficients) {
+    if (!std::isfinite(airspeedMetersPerSecond) || airspeedMetersPerSecond < 0.0 ||
+        !std::isfinite(sideslipAngleRadians) ||
+        !std::isfinite(rollRateRadiansPerSecond) ||
+        !std::isfinite(yawRateRadiansPerSecond) ||
+        !std::isfinite(densityKilogramsPerCubicMeter) || densityKilogramsPerCubicMeter <= 0.0 ||
+        !std::isfinite(coefficients.sideForceBeta) ||
+        !std::isfinite(coefficients.sideForceRollRate) ||
+        !std::isfinite(coefficients.sideForceYawRate) ||
+        !std::isfinite(coefficients.rollMomentBeta) ||
+        !std::isfinite(coefficients.rollMomentRollRate) ||
+        !std::isfinite(coefficients.rollMomentYawRate) ||
+        !std::isfinite(coefficients.yawMomentBeta) ||
+        !std::isfinite(coefficients.yawMomentRollRate) ||
+        !std::isfinite(coefficients.yawMomentYawRate) ||
+        !std::isfinite(coefficients.referenceSpanMeters) || coefficients.referenceSpanMeters <= 0.0) {
+        throw std::invalid_argument(
+            "lateral-directional aerodynamic inputs must be finite and physically valid");
+    }
+
+    if (airspeedMetersPerSecond == 0.0) {
+        return {};
+    }
+
+    const double dynamicPressure = 0.5 * densityKilogramsPerCubicMeter *
+                                   airspeedMetersPerSecond * airspeedMetersPerSecond;
+    const double rateScale = coefficients.referenceSpanMeters /
+                             (2.0 * airspeedMetersPerSecond);
+    const double normalizedRollRate = rollRateRadiansPerSecond * rateScale;
+    const double normalizedYawRate = yawRateRadiansPerSecond * rateScale;
+    const double sideForceCoefficient = coefficients.sideForceBeta * sideslipAngleRadians +
+        coefficients.sideForceRollRate * normalizedRollRate +
+        coefficients.sideForceYawRate * normalizedYawRate;
+    const double rollMomentCoefficient = coefficients.rollMomentBeta * sideslipAngleRadians +
+        coefficients.rollMomentRollRate * normalizedRollRate +
+        coefficients.rollMomentYawRate * normalizedYawRate;
+    const double yawMomentCoefficient = coefficients.yawMomentBeta * sideslipAngleRadians +
+        coefficients.yawMomentRollRate * normalizedRollRate +
+        coefficients.yawMomentYawRate * normalizedYawRate;
+    const double forceScale = dynamicPressure * properties.referenceArea();
+    const double momentScale = forceScale * coefficients.referenceSpanMeters;
+
+    return {
+        {0.0, forceScale * sideForceCoefficient, 0.0},
+        {momentScale * rollMomentCoefficient, 0.0, momentScale * yawMomentCoefficient}
     };
 }
