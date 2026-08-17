@@ -36,7 +36,9 @@ AerodynamicModel::LongitudinalCoefficients FixedWingReference::longitudinalCoeff
         0.05,
         0.025,
         -0.5,
-        0.4
+        0.4,
+        0.35,
+        1.2
     };
 }
 

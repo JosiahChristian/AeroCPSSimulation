@@ -1,5 +1,6 @@
 #include "AerodynamicModel.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
@@ -78,18 +79,28 @@ AerodynamicModel::Loads AerodynamicModel::longitudinalLoads(
         !std::isfinite(coefficients.inducedDragFactor) || coefficients.inducedDragFactor < 0.0 ||
         !std::isfinite(coefficients.zeroAnglePitchMoment) ||
         !std::isfinite(coefficients.pitchMomentSlopePerRadian) ||
-        !std::isfinite(coefficients.referenceChordMeters) || coefficients.referenceChordMeters <= 0.0) {
+        !std::isfinite(coefficients.referenceChordMeters) || coefficients.referenceChordMeters <= 0.0 ||
+        !std::isfinite(coefficients.maximumLinearAngleOfAttackRadians) ||
+            coefficients.maximumLinearAngleOfAttackRadians <= 0.0 ||
+        !std::isfinite(coefficients.maximumLiftCoefficientMagnitude) ||
+            coefficients.maximumLiftCoefficientMagnitude <= 0.0) {
         throw std::invalid_argument("longitudinal aerodynamic inputs must be finite and physically valid");
     }
 
     const double dynamicPressure = 0.5 * densityKilogramsPerCubicMeter *
                                    airspeedMetersPerSecond * airspeedMetersPerSecond;
-    const double liftCoefficient = coefficients.zeroAngleLift +
-                                   coefficients.liftSlopePerRadian * angleOfAttackRadians;
+    const double effectiveAngleOfAttack = std::clamp(
+        angleOfAttackRadians,
+        -coefficients.maximumLinearAngleOfAttackRadians,
+        coefficients.maximumLinearAngleOfAttackRadians);
+    const double liftCoefficient = std::clamp(
+        coefficients.zeroAngleLift + coefficients.liftSlopePerRadian * effectiveAngleOfAttack,
+        -coefficients.maximumLiftCoefficientMagnitude,
+        coefficients.maximumLiftCoefficientMagnitude);
     const double dragCoefficient = coefficients.zeroLiftDrag +
                                    coefficients.inducedDragFactor * liftCoefficient * liftCoefficient;
     const double pitchMomentCoefficient = coefficients.zeroAnglePitchMoment +
-                                          coefficients.pitchMomentSlopePerRadian * angleOfAttackRadians;
+        coefficients.pitchMomentSlopePerRadian * effectiveAngleOfAttack;
     const double area = properties.referenceArea();
 
     return {

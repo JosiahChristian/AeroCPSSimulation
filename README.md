@@ -24,6 +24,7 @@ The operational command-line scenario remains the verified vertical-flight contr
 - Configurable exponential atmosphere density and steady world-frame wind
 - Quadratic drag with validated reference area and drag coefficient
 - Configurable linear lift, induced drag, and pitching-moment coefficient model
+- Explicit angle-of-attack validity envelope and bounded lift coefficient
 - Configurable sideslip, roll-rate, and yaw-rate lateral-directional derivatives
 - Combined six-axis aerodynamic load assembly and body-to-world force application
 - Wind-relative body-frame airspeed, angle-of-attack, and sideslip derivation
@@ -136,6 +137,7 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 - exact telemetry schema version and required field contract
 - finite-state 250,000-step rigid-body performance smoke run
 - hand-calculated lift, induced-drag, and pitching-moment coefficient case
+- extreme positive and negative angle-of-attack saturation with finite loads
 - hand-calculated side-force, rolling-moment, and yawing-moment derivative case
 - exact six-axis load composition and a known 90-degree body-force frame transformation
 - wind-relative air-data derivation and body/world quaternion round-trip cases
@@ -145,7 +147,7 @@ Every pull request and push to `main` builds and tests the same CMake targets on
 
 Development will proceed in measured layers:
 
-1. perturbation-recovery control for the fixed-wing reference
+1. bounded perturbation-recovery control for the fixed-wing reference
 2. command-line six-degree-of-freedom scenario selection and telemetry
 3. direct ingestion integration with AeroCPSTelemetry
 
